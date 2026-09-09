@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2026.09.09.2",
+  "updatedAt": "2026-09-09T00:00:00.000Z",
+  "sources": [
+    {
+      "id": "ghproxy-net",
+      "label": "高速线路一",
+      "prefix": "https://ghproxy.net/",
+      "enabled": true,
+      "order": 10
+    },
+    {
+      "id": "gh-proxy-com",
+      "label": "高速线路二",
+      "prefix": "https://gh-proxy.com/",
+      "enabled": true,
+      "order": 20
+    },
+    {
+      "id": "github",
+      "label": "GitHub",
+      "prefix": "",
+      "enabled": true,
+      "order": 30
+    }
+  ],
+  "bundle": {
+    "assetKey": "NXN-workstation-resources-2026.09.09.2.zip",
+    "title": "NXN 工作站完整资料包",
+    "size": "69.9 MB",
+    "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/NXN-workstation-resources-2026.09.09.2.zip",
+    "sha256": "7bc7f6117cc60cd2a4990edc093bfb7b8a14354f8b9551fa8e5c9e59b1424d82"
+  },
+  "resources": [
+    {
+      "id": "workstation-deck",
+      "version": "V20260714",
+      "type": "ppt",
+      "typeLabel": "演示文稿",
+      "title": "创业陪跑工作站项目介绍",
+      "description": "系统了解工作站的项目定位、合作模式、收益体系与运营职责，适合项目宣讲和合作沟通。",
+      "format": "PDF",
+      "size": "19.3 MB",
+      "url": "https://3fu.github.io/nxn_resource/previews/workstation-deck/V20260714/deck-20260714.pdf",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/deck-20260714.pptx",
+      "downloadName": "创业陪跑工作站V20260714.pptx",
+      "downloadLabel": "下载 PPTX",
+      "previewKind": "pdf",
+      "sha256": "9530f87e8a18d7fac6cf7fb4a8d2116720952e85458fa68406f76f6c9dd9ea57",
+      "assetKey": "deck-20260714.pptx",
+      "updatedAt": "2026-09-09T00:00:00.000Z"
+    },
+    {
+      "id": "operations-training",
+      "version": "V260820",
+      "type": "ppt",
+      "typeLabel": "演示文稿",
+      "title": "工作站运营培训手册",
+      "description": "面向工作站内部培训与实际运营，梳理业务开展方式、岗位职责和标准化执行要点。",
+      "format": "PDF",
+      "size": "21.4 MB",
+      "url": "https://3fu.github.io/nxn_resource/previews/operations-training/V260820/operations-training-20260820.pdf",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/operations-training-20260820.pptx",
+      "downloadName": "创业陪跑工作站运营培训手册V260820.pptx",
+      "downloadLabel": "下载 PPTX",
+      "previewKind": "pdf",
+      "sha256": "4df4d73953a931c5030f1aa3bed737e0a662c4da933a4b9485fd5df25c7647eb",
+      "assetKey": "operations-training-20260820.pptx",
+      "updatedAt": "2026-09-09T00:00:00.000Z"
+    },
+    {
+      "id": "poster-h106",
+      "version": "V20260630",
+      "type": "poster",
+      "typeLabel": "图片",
+      "title": "H106 工作站服务器海报",
+      "description": "展示 H106 服务器、人工智能 PDA 与 NXNOS 配置，适合工作站介绍和线下展示。",
+      "format": "PNG",
+      "size": "1.6 MB",
+      "url": "https://3fu.github.io/nxn_resource/previews/poster-h106/V20260630/poster-h106.png",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/poster-h106.png",
+      "downloadName": "创业陪跑工作站H106服务器海报.png",
+      "downloadLabel": "下载原图",
+      "previewKind": "image",
+      "sha256": "1279615be1e4776d6e7d05bc1ac49077b21b03d2da7fdd61c883da7582e4f0ed",
+      "assetKey": "poster-h106.png",
+      "updatedAt": "2026-09-09T00:00:00.000Z"
+    },
+    {
+      "id": "poster-h106h2",
+      "version": "",
+      "type": "poster",
+      "typeLabel": "图片",
+      "title": "H106H2 算力中心海报",
+      "description": "介绍 H106H2 的算力配置、自动接单能力和版本价格，适合宣传与合作讲解。",
+      "format": "PNG",
+      "size": "1.9 MB",
+      "url": "https://3fu.github.io/nxn_resource/previews/poster-h106h2/current/poster-h106h2.png",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/poster-h106h2.png",
+      "downloadName": "H106H2算力中心海报.png",
+      "downloadLabel": "下载原图",
+      "previewKind": "image",
+      "sha256": "a3c393d47970c3a2b1e058298117c0f3e2b1fe0b326a0d31bf798dab9c48712e",
+      "assetKey": "poster-h106h2.png",
+      "updatedAt": "2026-09-09T00:00:00.000Z"
+    },
+    {
+      "id": "application-form",
+      "version": "",
+      "type": "document",
+      "typeLabel": "文档",
+      "title": "工作站体验馆设立申请表",
+      "description": "用于提交创业陪跑工作站体验馆设立申请，请下载后按表格要求填写。",
+      "format": "DOCX",
+      "size": "17 KB",
+      "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-form.docx",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-form.docx",
+      "downloadName": "1.创业陪跑工作站体验馆设立申请表.docx",
+      "downloadLabel": "下载文件",
+      "previewKind": "document",
+      "previewSections": [
+        {
+          "title": "申请总则及硬性规定",
+          "content": "体验馆经营总面积不得低于 200㎡，需配备专用培训、座谈会议室及全套人工智能运营系统；工作站服务范围限单个区县，单站最多选择 5 个行业。"
+        },
+        {
+          "title": "需要填写的信息",
+          "content": "包括申请企业基础信息、工作站管理团队、授权服务行业、企业申请承诺书及主管单位审批意见。"
+        },
+        {
+          "title": "审批流程",
+          "content": "企业提交申请 → 专委会资料及场地审核 → 审核通过后授权备案；材料不达标可退回整改并再次提交。"
+        }
+      ],
+      "sha256": "9f4e7fbbf9801ea45fb87c7a0d65a95a343213ee087f1cea696de40b51f2f81c",
+      "assetKey": "application-form.docx",
+      "updatedAt": "2026-09-09T00:00:00.000Z"
+    },
+    {
+      "id": "workstation-description",
+      "version": "",
+      "type": "document",
+      "typeLabel": "文档",
+      "title": "工作站体验馆说明",
+      "description": "临沂市人工智能协会工作站体验馆的项目说明文件，供申请前查阅和准备。",
+      "format": "DOCX",
+      "size": "21 KB",
+      "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/workstation-description.docx",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/workstation-description.docx",
+      "downloadName": "2.临沂市人工智能协会工作站体验馆说明.docx",
+      "downloadLabel": "下载文件",
+      "previewKind": "document",
+      "previewSections": [
+        {
+          "title": "核心使命",
+          "content": "工作站承担政策传导、金融对接和标准助力等职能，为会员企业与政府、基金及产业资源建立连接。"
+        },
+        {
+          "title": "设立规范",
+          "content": "营业面积不低于 200㎡，设置接待区与会议区并配备基础会议设施；至少配置站长与秘书长两名工作人员。"
+        },
+        {
+          "title": "申请流程",
+          "content": "提交申请材料，经材料初审、实地考察和综合评审后通知结果；获批单位完成备案登记并接受后续管理。"
+        }
+      ],
+      "sha256": "bb94a54781fdf9f88ddcee5f3ed224aa664d90cc3a430c1c5e82becb86b6bd6e",
+      "assetKey": "workstation-description.docx",
+      "updatedAt": "2026-09-09T00:00:00.000Z"
+    },
+    {
+      "id": "application-checklist",
+      "version": "",
+      "type": "document",
+      "typeLabel": "文档",
+      "title": "工作站申报材料清单",
+      "description": "汇总申报工作站体验馆需要准备的材料，便于提交前逐项核对。",
+      "format": "DOCX",
+      "size": "12 KB",
+      "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-checklist.docx",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-checklist.docx",
+      "downloadName": "附件1.创业陪跑工作站申报材料清单.docx",
+      "downloadLabel": "下载文件",
+      "previewKind": "document",
+      "previewSections": [
+        {
+          "title": "基础资格与法人资料",
+          "content": "申报表格、企业营业执照副本、法定代表人身份证明等文件。"
+        },
+        {
+          "title": "场地与硬件环境",
+          "content": "场地权属或租赁证明、工作站场所实景照片，以及电脑、投影仪等配套设备清单。"
+        },
+        {
+          "title": "人员配备",
+          "content": "工作站人员名单及简介、站长和联络员资料，并附相关履历或证明材料。"
+        }
+      ],
+      "sha256": "617104c5596e1ee1768d1e70727a720ef0a483a332cc284fa5b994a1533eca43",
+      "assetKey": "application-checklist.docx",
+      "updatedAt": "2026-09-09T00:00:00.000Z"
+    },
+    {
+      "id": "application-template",
+      "version": "",
+      "type": "document",
+      "typeLabel": "文档",
+      "title": "工作站体验馆申请表格",
+      "description": "工作站体验馆申报配套表格模板，可直接下载并按要求补充申请信息。",
+      "format": "DOCX",
+      "size": "14 KB",
+      "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-template.docx",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-template.docx",
+      "downloadName": "附件2.工作站体验馆申请表格.docx",
+      "downloadLabel": "下载文件",
+      "previewKind": "document",
+      "previewSections": [
+        {
+          "title": "单位信息",
+          "content": "填写工作站名称、申请单位、单位性质、联系人、地址及申请理由。"
+        },
+        {
+          "title": "人员与场地",
+          "content": "填写站长、秘书长人选信息及行业经验，并说明场地面积、详细地址和功能分区。"
+        },
+        {
+          "title": "提交说明",
+          "content": "填写完成后附单位资质、人员与场地证明等材料，发送至指定邮箱或递交至协会办公地点。"
+        }
+      ],
+      "sha256": "8c9ed8aece57e97b8a58330bfe0d9421ede25cd50964f2e1f7ffb37410e56bf7",
+      "assetKey": "application-template.docx",
+      "updatedAt": "2026-09-09T00:00:00.000Z"
+    }
+  ]
+}
