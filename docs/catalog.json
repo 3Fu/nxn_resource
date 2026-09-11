@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.09.2",
-  "updatedAt": "2026-09-09T00:00:00.000Z",
+  "catalogVersion": "2026.09.10.1",
+  "updatedAt": "2026-09-11T00:00:00.000Z",
   "sources": [
     {
       "id": "ghproxy-net",
@@ -26,11 +26,11 @@
     }
   ],
   "bundle": {
-    "assetKey": "NXN-workstation-resources-2026.09.09.2.zip",
+    "assetKey": "NXN-workstation-resources-2026.09.10.1.zip",
     "title": "NXN 工作站完整资料包",
-    "size": "69.9 MB",
-    "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/NXN-workstation-resources-2026.09.09.2.zip",
-    "sha256": "7bc7f6117cc60cd2a4990edc093bfb7b8a14354f8b9551fa8e5c9e59b1424d82"
+    "size": "85.8 MB",
+    "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.10.1/NXN-workstation-resources-2026.09.10.1.zip",
+    "sha256": "938092e76f1241c71a775cc0f0fc7b7a82622471d296d626cbe004b419b210d0"
   },
   "resources": [
     {
@@ -43,7 +43,7 @@
       "format": "PDF",
       "size": "19.3 MB",
       "url": "https://3fu.github.io/nxn_resource/previews/workstation-deck/V20260714/deck-20260714.pdf",
-      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/deck-20260714.pptx",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.10.1/deck-20260714.pptx",
       "downloadName": "创业陪跑工作站V20260714.pptx",
       "downloadLabel": "下载 PPTX",
       "previewKind": "pdf",
@@ -61,7 +61,7 @@
       "format": "PDF",
       "size": "21.4 MB",
       "url": "https://3fu.github.io/nxn_resource/previews/operations-training/V260820/operations-training-20260820.pdf",
-      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/operations-training-20260820.pptx",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.10.1/operations-training-20260820.pptx",
       "downloadName": "创业陪跑工作站运营培训手册V260820.pptx",
       "downloadLabel": "下载 PPTX",
       "previewKind": "pdf",
@@ -79,7 +79,7 @@
       "format": "PNG",
       "size": "1.6 MB",
       "url": "https://3fu.github.io/nxn_resource/previews/poster-h106/V20260630/poster-h106.png",
-      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/poster-h106.png",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.10.1/poster-h106.png",
       "downloadName": "创业陪跑工作站H106服务器海报.png",
       "downloadLabel": "下载原图",
       "previewKind": "image",
@@ -97,7 +97,7 @@
       "format": "PNG",
       "size": "1.9 MB",
       "url": "https://3fu.github.io/nxn_resource/previews/poster-h106h2/current/poster-h106h2.png",
-      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/poster-h106h2.png",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.10.1/poster-h106h2.png",
       "downloadName": "H106H2算力中心海报.png",
       "downloadLabel": "下载原图",
       "previewKind": "image",
@@ -115,7 +115,7 @@
       "format": "DOCX",
       "size": "17 KB",
       "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-form.docx",
-      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-form.docx",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.10.1/application-form.docx",
       "downloadName": "1.创业陪跑工作站体验馆设立申请表.docx",
       "downloadLabel": "下载文件",
       "previewKind": "document",
@@ -147,7 +147,7 @@
       "format": "DOCX",
       "size": "21 KB",
       "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/workstation-description.docx",
-      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/workstation-description.docx",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.10.1/workstation-description.docx",
       "downloadName": "2.临沂市人工智能协会工作站体验馆说明.docx",
       "downloadLabel": "下载文件",
       "previewKind": "document",
@@ -179,7 +179,7 @@
       "format": "DOCX",
       "size": "12 KB",
       "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-checklist.docx",
-      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-checklist.docx",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.10.1/application-checklist.docx",
       "downloadName": "附件1.创业陪跑工作站申报材料清单.docx",
       "downloadLabel": "下载文件",
       "previewKind": "document",
@@ -211,7 +211,7 @@
       "format": "DOCX",
       "size": "14 KB",
       "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-template.docx",
-      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.09.2/application-template.docx",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.10.1/application-template.docx",
       "downloadName": "附件2.工作站体验馆申请表格.docx",
       "downloadLabel": "下载文件",
       "previewKind": "document",
@@ -232,6 +232,24 @@
       "sha256": "8c9ed8aece57e97b8a58330bfe0d9421ede25cd50964f2e1f7ffb37410e56bf7",
       "assetKey": "application-template.docx",
       "updatedAt": "2026-09-09T00:00:00.000Z"
+    },
+    {
+      "id": "ai-nxnos-training",
+      "version": "V20260909",
+      "type": "ppt",
+      "typeLabel": "演示文稿",
+      "title": "人工智能工作原理与NXNOS系统培训",
+      "description": "讲解人工智能的基本工作原理与 NXNOS 系统的基础知识与使用入门，适合系统新入人员培训与学习。",
+      "format": "PDF",
+      "size": "15.9 MB",
+      "url": "https://3fu.github.io/nxn_resource/previews/ai-nxnos-training/V20260909/ai-nxnos-training-20260909.pdf",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.10.1/ai-nxnos-training-20260909.pdf",
+      "downloadName": "人工智能工作原理与NXNOS系统培训V20260909.pdf",
+      "downloadLabel": "下载 PDF",
+      "previewKind": "pdf",
+      "sha256": "c046554fa28f6a3424f21b25e705060d1687a16c4ea6d950e3eb55c8028a9304",
+      "assetKey": "ai-nxnos-training-20260909.pdf",
+      "updatedAt": "2026-09-11T00:00:00.000Z"
     }
   ]
 }
