@@ -1,0 +1,7 @@
+interface:
+  display_name: "NXN 资料发布"
+  short_description: "校验、发布和回滚 NXN 官网公开资料中心内容"
+  default_prompt: "Use $nxn-resource-publisher to validate and publish this NXN 资料中心 update."
+  brand_color: "#7528F1"
+policy:
+  allow_implicit_invocation: true

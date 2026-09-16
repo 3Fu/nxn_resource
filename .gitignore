@@ -1,0 +1,7 @@
+# 本地发布工作区与凭据（不进入版本控制）
+agents/skills/nxn-resource-publisher/.work/
+agents/skills/nxn-resource-publisher/.env
+
+# 依赖与构建产物
+node_modules/
+dist/
