@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
-import { spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { createReadStream, createWriteStream, existsSync, readFileSync } from "node:fs";
 import { copyFile, mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import { Readable } from "node:stream";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
+import { isDeepStrictEqual } from "node:util";
 
 const OWNER = "3Fu";
 const REPO = "nxn_resource";
 const API = `https://api.github.com/repos/${OWNER}/${REPO}`;
+const CATALOG_URL = `https://${OWNER.toLowerCase()}.github.io/${REPO}/catalog.json`;
 const MAX_PREVIEW_BYTES = 95 * 1024 * 1024;
 // 资源类型与预览类型不再使用固定枚举，新增素材种类不需要改这里。
 const KIND_PATTERN = /^[a-z][a-z0-9-]{0,31}$/;
@@ -18,7 +19,16 @@ const KIND_PATTERN = /^[a-z][a-z0-9-]{0,31}$/;
 const PAGE_PREVIEW_KINDS = new Set(["pdf", "image"]);
 // 直接引用 Release 原件的两类：video 在线播放，download 只给下载入口。
 const RELEASE_PREVIEW_KINDS = new Set(["video", "download"]);
-const URL_HOSTS = new Set(["3fu.github.io", "cdn.jsdelivr.net", "raw.githubusercontent.com", "github.com", "ghproxy.net", "gh-proxy.com"]);
+const URL_HOSTS = new Set([
+  "3fu.github.io",
+  "cdn.jsdelivr.net",
+  "raw.githubusercontent.com",
+  "github.com",
+  "objects.githubusercontent.com",
+  "release-assets.githubusercontent.com",
+  "ghproxy.net",
+  "gh-proxy.com",
+]);
 
 function loadLocalEnv() {
   const here = dirname(fileURLToPath(import.meta.url));
@@ -37,7 +47,7 @@ loadLocalEnv();
 
 function usage(message) {
   if (message) process.stderr.write(`${message}\n\n`);
-  process.stderr.write("Usage:\n  resource-center.mjs stage-initial --workspace DIR --website-root DIR\n  resource-center.mjs validate --workspace DIR\n  resource-center.mjs release --workspace DIR\n  resource-center.mjs publish --workspace DIR\n  resource-center.mjs rollback --version VERSION\n\nrelease uploads originals plus the bundle and publishes the Release, leaving git to the caller.\npublish runs release first, then commits previews and the catalog through the GitHub API.\n");
+  process.stderr.write("Usage:\n  resource-center.mjs validate --workspace DIR\n  resource-center.mjs verify-remote --workspace DIR [--catalog-url URL] [--assets true]\n  resource-center.mjs release --workspace DIR [--allow-same-version true]\n  resource-center.mjs publish --workspace DIR [--root DIR] [--allow-same-version true]\n  resource-center.mjs rollback --version VERSION\n\nrelease uploads changed originals plus the bundle and publishes the Release, leaving git to the caller.\npublish runs release first, then commits previews and the catalog through the GitHub API. With --root it mirrors the final catalog, manifest, previews, and git-distributed originals back into the source repository.\nverify-remote compares the workspace catalog with the public Pages catalog and can probe published Release assets.\n");
   process.exit(message ? 2 : 0);
 }
 
@@ -72,6 +82,20 @@ function safeAssetKey(value, name) {
   assert(/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(value), `${name} must be a URL-safe filename`);
 }
 
+function safeDownloadName(value, name) {
+  safeString(value, name, 500);
+  assert(basename(value) === value && value !== "." && value !== "..", `${name} must not contain path separators`);
+}
+
+function releaseInfo(value, name) {
+  const url = safeUrl(value, name);
+  const prefix = `/${OWNER}/${REPO}/releases/download/`;
+  assert(url.hostname === "github.com" && url.pathname.startsWith(prefix), `${name} must belong to ${OWNER}/${REPO}`);
+  const match = url.pathname.slice(prefix.length).match(/^(resources-(\d+(?:\.\d+)+))\//);
+  assert(match, `${name} must point to a resources-<version> Release in ${OWNER}/${REPO}`);
+  return { url, tag: match[1], version: match[2] };
+}
+
 function compareVersions(left, right) {
   const a = left.split(".").map(Number);
   const b = right.split(".").map(Number);
@@ -97,6 +121,67 @@ async function sha256(file) {
     const hash = createHash("sha256");
     createReadStream(file).on("error", reject).on("data", (chunk) => hash.update(chunk)).on("end", () => resolveHash(hash.digest("hex")));
   });
+}
+
+function sleep(milliseconds) {
+  return new Promise((done) => setTimeout(done, milliseconds));
+}
+
+async function fetchRemoteCatalog(catalogUrl, expectedVersion) {
+  const url = safeUrl(catalogUrl, "catalog URL");
+  let lastVersion = null;
+  let lastError = null;
+  for (let attempt = 1; attempt <= 8; attempt += 1) {
+    url.searchParams.set("published", `${Date.now()}-${attempt}`);
+    try {
+      const response = await fetch(url, {
+        headers: { Accept: "application/json", "Cache-Control": "no-cache" },
+        redirect: "follow",
+        signal: AbortSignal.timeout(15000),
+      });
+      assert(response.ok, `Unable to read remote catalog: HTTP ${response.status}`);
+      const catalog = JSON.parse(await response.text());
+      lastVersion = catalog?.catalogVersion || null;
+      if (lastVersion === expectedVersion) return catalog;
+      lastError = null;
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < 8) await sleep(3000);
+  }
+  if (lastError) {
+    const detail = lastError instanceof Error ? lastError.message : String(lastError);
+    throw new Error(`Remote catalog check failed for ${url.origin}${url.pathname}: ${detail}`);
+  }
+  throw new Error(`Remote catalog is still ${lastVersion || "unknown"}; expected ${expectedVersion}`);
+}
+
+async function probePublicUrl(urlValue, name, { range = false } = {}) {
+  const url = safeUrl(urlValue, name);
+  let lastError = null;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          ...(range ? { Range: "bytes=0-0" } : {}),
+          "Cache-Control": "no-cache",
+        },
+        redirect: "follow",
+        signal: AbortSignal.timeout(20000),
+      });
+      try {
+        assert(response.ok, `${name} is unavailable: HTTP ${response.status}`);
+        return;
+      } finally {
+        await response.body?.cancel().catch(() => {});
+      }
+    } catch (error) {
+      lastError = error;
+      if (attempt < 3) await sleep(1000 * attempt);
+    }
+  }
+  const detail = lastError instanceof Error ? lastError.message : String(lastError);
+  throw new Error(`${name} check failed for ${url.href}: ${detail}`);
 }
 
 async function loadCatalog(workspace) {
@@ -137,11 +222,14 @@ async function validate(workspace) {
     assert(/^[a-f0-9]{64}$/.test(resource.sha256), `Resource ${resource.id} sha256 is invalid`);
     assert(Number.isFinite(Date.parse(resource.updatedAt)), `Resource ${resource.id} updatedAt is invalid`);
     safeAssetKey(resource.assetKey, `${resource.id}.assetKey`);
+    safeDownloadName(resource.downloadName, `${resource.id}.downloadName`);
     assert(!assetKeys.has(resource.assetKey), `Duplicate assetKey ${resource.assetKey}`);
     assetKeys.add(resource.assetKey);
     safeUrl(resource.url, `${resource.id}.url`);
-    const downloadUrl = safeUrl(resource.downloadUrl, `${resource.id}.downloadUrl`);
-    assert(downloadUrl.hostname === "github.com" && downloadUrl.pathname.includes(`/${OWNER}/${REPO}/releases/download/`), `${resource.id}.downloadUrl must be an official Release URL`);
+    const download = releaseInfo(resource.downloadUrl, `${resource.id}.downloadUrl`);
+    assert(download.url.hostname === "github.com", `${resource.id}.downloadUrl must be an official GitHub URL`);
+    assert(compareVersions(download.version, catalog.catalogVersion) <= 0, `${resource.id}.downloadUrl must not target a future catalog version`);
+    assert(download.url.pathname.endsWith(`/${resource.assetKey}`), `${resource.id}.downloadUrl must end with ${resource.assetKey}`);
     if (resource.coverUrl) safeUrl(resource.coverUrl, `${resource.id}.coverUrl`);
     if (resource.previewSections) for (const section of resource.previewSections) {
       safeString(section.title, `${resource.id}.previewSections.title`, 120);
@@ -156,7 +244,6 @@ async function validate(workspace) {
       assert(preview && existsSync(preview), `Missing preview for ${resource.id}`);
       assert((await stat(preview)).size < MAX_PREVIEW_BYTES, `Preview for ${resource.id} must be smaller than 95 MiB`);
     } else if (RELEASE_PREVIEW_KINDS.has(resource.previewKind)) {
-      assert(downloadUrl.pathname.endsWith(`/${resource.assetKey}`), `${resource.id}.downloadUrl must end with ${resource.assetKey}`);
       const streaming = safeUrl(resource.url, `${resource.id}.url`);
       assert(streaming.hostname === "github.com" && streaming.pathname.endsWith(`/${resource.assetKey}`), `${resource.id}.url must stream the same Release asset as downloadUrl`);
     }
@@ -168,7 +255,9 @@ async function validate(workspace) {
   safeAssetKey(catalog.bundle?.assetKey, "bundle.assetKey");
   assert(!assetKeys.has(catalog.bundle.assetKey), `bundle.assetKey conflicts with a resource assetKey`);
   safeString(catalog.bundle?.title, "bundle.title");
-  safeUrl(catalog.bundle?.url, "bundle.url");
+  const bundle = releaseInfo(catalog.bundle?.url, "bundle.url");
+  assert(bundle.tag === `resources-${catalog.catalogVersion}`, "bundle.url must target the current catalog version");
+  assert(bundle.url.pathname.endsWith(`/${catalog.bundle.assetKey}`), "bundle.url must end with bundle.assetKey");
   process.stdout.write(`Validated ${catalog.resources.length} resources for ${catalog.catalogVersion}.\n`);
   return { catalog, assets };
 }
@@ -178,41 +267,38 @@ async function ensureParent(file) {
 }
 
 async function copy(source, destination) {
+  if (resolve(source) === resolve(destination)) return;
+  try {
+    const [sourceInfo, destinationInfo] = await Promise.all([stat(source), stat(destination)]);
+    if (sourceInfo.dev === destinationInfo.dev && sourceInfo.ino === destinationInfo.ino) return;
+  } catch {
+    // A missing destination is handled by copyFile below.
+  }
   await ensureParent(destination);
   await copyFile(source, destination);
 }
 
-async function stageInitial(workspace, websiteRoot) {
-  await mkdir(join(workspace, "assets"), { recursive: true });
-  await mkdir(join(workspace, "docs", "previews"), { recursive: true });
-  const moduleUrl = pathToFileURL(join(websiteRoot, "src", "data", "workstationResourceCatalog.js")).href;
-  const catalog = JSON.parse(JSON.stringify((await import(`${moduleUrl}?v=${Date.now()}`)).default));
-  const localFiles = {
-    "007.mp4": join(websiteRoot, "src", "assets", "007.mp4"),
-  };
-  for (const resource of catalog.resources) localFiles[resource.assetKey] ||= join(websiteRoot, "public", "workstation-resources", resource.assetKey);
-  for (const resource of catalog.resources) await copy(localFiles[resource.assetKey], join(workspace, "assets", resource.assetKey));
+async function verifyRemote(workspace, { catalogUrl, assets = false } = {}) {
+  const { catalog } = await loadCatalog(workspace);
+  const remote = await fetchRemoteCatalog(catalogUrl || CATALOG_URL, catalog.catalogVersion);
+  assert(isDeepStrictEqual(remote, catalog), "Remote catalog does not match the prepared workspace catalog");
+  process.stdout.write(`Remote catalog matches ${catalog.catalogVersion} with ${catalog.resources.length} resources.\n`);
 
-  const previews = {
-    "workstation-deck": join(websiteRoot, "public", "workstation-resources", "deck-20260714.pdf"),
-    "operations-training": join(websiteRoot, "public", "workstation-resources", "operations-training-20260820.pdf"),
-    "poster-h106": join(websiteRoot, "public", "workstation-resources", "poster-h106.png"),
-    "poster-h106h2": join(websiteRoot, "public", "workstation-resources", "poster-h106h2.png"),
-  };
-  for (const resource of catalog.resources.filter((item) => previews[item.id])) await copy(previews[resource.id], previewFileFromUrl(workspace, resource.url));
-  const video = catalog.resources.find((item) => item.id === "nxn-intro-video");
-  if (video) {
-    await copy(join(websiteRoot, "video-frame-10.jpg"), previewFileFromUrl(workspace, video.coverUrl));
-    const videoPreview = previewFileFromUrl(workspace, video.url);
-    await ensureParent(videoPreview);
-    const ffmpeg = spawnSync("ffmpeg", ["-y", "-i", localFiles[video.assetKey], "-c:v", "libx264", "-preset", "medium", "-crf", "28", "-c:a", "aac", "-b:a", "96k", "-movflags", "+faststart", videoPreview], { stdio: "inherit" });
-    assert(ffmpeg.status === 0, "ffmpeg is required and must successfully generate the video preview");
-    assert((await stat(videoPreview)).size < MAX_PREVIEW_BYTES, "Generated video preview is at least 95 MiB; increase CRF and retry");
+  if (assets) {
+    const releaseUrls = new Map(catalog.resources.map((resource) => [resource.downloadUrl, `${resource.id}.downloadUrl`]));
+    releaseUrls.set(catalog.bundle.url, "bundle.url");
+    for (const [url, name] of releaseUrls) await probePublicUrl(url, name, { range: true });
+
+    const previewUrls = new Map();
+    for (const resource of catalog.resources) {
+      if (resource.url !== resource.downloadUrl) previewUrls.set(resource.url, `${resource.id}.preview`);
+      if (resource.coverUrl) previewUrls.set(resource.coverUrl, `${resource.id}.coverUrl`);
+    }
+    for (const [url, name] of previewUrls) await probePublicUrl(url, name);
+
+    process.stdout.write(`Verified ${releaseUrls.size} published Release assets by range request.\n`);
+    process.stdout.write(`Verified ${previewUrls.size} public preview assets.\n`);
   }
-  await ensureParent(join(workspace, "docs", "catalog.json"));
-  await writeFile(join(workspace, "docs", "catalog.json"), `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
-  await validate(workspace);
-  process.stdout.write(`Initial workspace staged at ${workspace}.\n`);
 }
 
 async function filesUnder(directory) {
@@ -392,13 +478,13 @@ async function currentCatalog() {
   }
 }
 
-async function getOrCreateDraft(tag) {
+async function getOrCreateRelease(tag, { allowPublished = false } = {}) {
   const releases = await github("/releases?per_page=100");
   const matches = releases.filter((release) => release.tag_name === tag);
   assert(matches.length <= 1, `Multiple releases already exist for ${tag}; resolve them before publishing`);
   const existing = matches[0];
   if (existing) {
-    assert(existing.draft, `Release ${tag} already exists and is not a draft`);
+    assert(existing.draft || allowPublished, `Release ${tag} already exists and is not a draft`);
     return existing;
   }
   return github("/releases", { method: "POST", body: { tag_name: tag, target_commitish: "main", name: `NXN 资料中心 ${tag.replace("resources-", "")}`, draft: true, prerelease: false } });
@@ -409,7 +495,11 @@ async function uploadAsset(release, file) {
   const existing = release.assets?.find((asset) => asset.name === basename(file));
   if (existing) {
     assert(existing.size === info.size, `Draft already has ${existing.name} with a different size; create a new catalog version`);
-    process.stdout.write(`Skipped existing ${existing.name}.\n`);
+    if (existing.digest) {
+      const expected = `sha256:${await sha256(file)}`;
+      assert(existing.digest.toLowerCase() === expected, `Release already has ${existing.name} with a different SHA-256; create a new catalog version`);
+    }
+    process.stdout.write(`Skipped existing ${existing.name}${existing.digest ? " (SHA-256 verified)" : ""}.\n`);
     return;
   }
   const uploadUrl = release.upload_url.replace("{?name,label}", `?name=${encodeURIComponent(basename(file))}`);
@@ -424,14 +514,19 @@ async function uploadAsset(release, file) {
   process.stdout.write(`Uploaded ${basename(file)}.\n`);
 }
 
-async function publishRelease(workspace, { finalize = true, dryRun = false } = {}) {
+async function publishRelease(workspace, { finalize = true, dryRun = false, allowSameVersion = false } = {}) {
   const { catalog, assets } = await validate(workspace);
   const tag = `resources-${catalog.catalogVersion}`;
-  assert(catalog.resources.every((item) => new URL(item.downloadUrl).pathname.includes(`/releases/download/${tag}/`)), `Every downloadUrl must target ${tag}`);
   assert(new URL(catalog.bundle.url).pathname.includes(`/releases/download/${tag}/`), `bundle.url must target ${tag}`);
   const displayNames = new Map(catalog.resources.map((item) => [item.assetKey, item.downloadName]));
   const bundle = await createBundle(workspace, catalog, assets, displayNames);
-  await writeFile(join(workspace, "docs", "catalog.json"), `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
+  const serialized = `${JSON.stringify(catalog, null, 2)}\n`;
+  const workspaceCatalog = join(workspace, "docs", "catalog.json");
+  const workspaceArchive = join(workspace, "docs", "catalogs", `${catalog.catalogVersion}.json`);
+  await ensureParent(workspaceCatalog);
+  await writeFile(workspaceCatalog, serialized, "utf8");
+  await ensureParent(workspaceArchive);
+  await writeFile(workspaceArchive, serialized, "utf8");
   if (dryRun) {
     process.stdout.write(`Dry run: ${basename(bundle)} is ready (${catalog.bundle.size}, sha256 ${catalog.bundle.sha256}); release ${tag} was not created.\n`);
     return { catalog, release: null, bundle };
@@ -439,31 +534,68 @@ async function publishRelease(workspace, { finalize = true, dryRun = false } = {
   const repo = await github("");
   assert(repo.full_name === `${OWNER}/${REPO}` && !repo.private && !repo.archived, `${OWNER}/${REPO} must be a writable public repository`);
   const previous = await currentCatalog();
+  let allowPublished = !previous;
   if (previous) {
     assert(previous.schemaVersion === 1 && typeof previous.catalogVersion === "string" && /^\d+(?:\.\d+)+$/.test(previous.catalogVersion), "Current catalog is invalid");
-    assert(compareVersions(catalog.catalogVersion, previous.catalogVersion) > 0, `catalogVersion must be newer than ${previous.catalogVersion}`);
+    const comparison = compareVersions(catalog.catalogVersion, previous.catalogVersion);
+    assert(comparison >= 0, `catalogVersion must not be older than ${previous.catalogVersion}`);
+    if (comparison === 0) assert(allowSameVersion, `${catalog.catalogVersion} is already published; bump the version, or pass --allow-same-version true to finish its Release`);
+    allowPublished = comparison > 0 || allowSameVersion;
   }
 
-  const release = await getOrCreateDraft(tag);
-  const currentTagAssets = assets.filter((asset) => catalog.resources.some((item) => item.assetKey === basename(asset) && new URL(item.downloadUrl).pathname.includes(`/releases/download/${tag}/`)));
+  const release = await getOrCreateRelease(tag, { allowPublished });
+  const currentTagAssetKeys = new Set(
+    catalog.resources
+      .filter((item) => releaseInfo(item.downloadUrl, `${item.id}.downloadUrl`).tag === tag)
+      .map((item) => item.assetKey),
+  );
+  const currentTagAssets = assets.filter((asset) => currentTagAssetKeys.has(basename(asset)));
   for (const asset of [...currentTagAssets, bundle]) await uploadAsset(release, asset);
   if (finalize) {
     await github(`/releases/${release.id}`, { method: "PATCH", body: { draft: false } });
     process.stdout.write(`Release ${tag} published with ${currentTagAssets.length + 1} assets: https://github.com/${OWNER}/${REPO}/releases/tag/${tag}\n`);
+  } else if (!release.draft) {
+    process.stdout.write(`Release ${tag} is already published; verified ${currentTagAssets.length + 1} assets.\n`);
   } else {
     process.stdout.write(`Draft ${tag} staged with ${currentTagAssets.length + 1} assets; commit, push and then finalize the Release.\n`);
   }
   return { catalog, release, bundle };
 }
 
-async function publish(workspace) {
-  const { catalog, release } = await publishRelease(workspace, { finalize: false });
+async function mirrorPublishedWorkspace(workspace, root) {
+  const manifestFile = join(workspace, "doc", "manifest.json");
+  assert(existsSync(manifestFile), `Missing ${manifestFile}; use resource-sync.mjs prepare before publishing with --root`);
+  const manifest = JSON.parse(await readFile(manifestFile, "utf8"));
+  assert(manifest?.schemaVersion === 1 && Array.isArray(manifest.assets), "Workspace doc/manifest.json is invalid");
+  const { catalog } = await loadCatalog(workspace);
+  assert(manifest.catalogVersion === catalog.catalogVersion, "Workspace manifest and catalog versions differ");
+  assert(resolve(root) !== resolve(workspace), "--root must be the source repository, not the release workspace");
+
+  await copy(join(workspace, "docs", "catalog.json"), join(root, "docs", "catalog.json"));
+  await copy(join(workspace, "docs", "catalogs", `${manifest.catalogVersion}.json`), join(root, "docs", "catalogs", `${manifest.catalogVersion}.json`));
+  for (const file of await filesUnder(join(workspace, "docs", "previews"))) {
+    await copy(file, join(root, "docs", "previews", relative(join(workspace, "docs", "previews"), file)));
+  }
+  for (const asset of manifest.assets.filter((entry) => entry.distribution === "git")) {
+    safeAssetKey(asset.assetKey, "manifest assetKey");
+    safeDownloadName(asset.originalName, "manifest originalName");
+    const source = join(workspace, "assets", asset.assetKey);
+    assert(existsSync(source), `Missing workspace asset ${asset.assetKey}`);
+    await copy(source, join(root, "doc", asset.originalName));
+  }
+  await copy(manifestFile, join(root, "doc", "manifest.json"));
+  process.stdout.write(`Synchronized published artifacts into ${root}.\n`);
+}
+
+async function publish(workspace, { root = null, allowSameVersion = false } = {}) {
+  const { catalog, release } = await publishRelease(workspace, { finalize: false, allowSameVersion });
   const previewRoot = join(workspace, "docs", "previews");
   await putFiles(workspace, await filesUnder(previewRoot), `Publish ${catalog.catalogVersion} previews`);
   const serialized = `${JSON.stringify(catalog, null, 2)}\n`;
   await putContent(`docs/catalogs/${catalog.catalogVersion}.json`, serialized, `Archive resource catalog ${catalog.catalogVersion}`);
   await github(`/releases/${release.id}`, { method: "PATCH", body: { draft: false } });
   await putContent("docs/catalog.json", serialized, `Activate resource catalog ${catalog.catalogVersion}`);
+  if (root) await mirrorPublishedWorkspace(workspace, resolve(root));
   process.stdout.write(`Published resources-${catalog.catalogVersion}. Catalog: https://${OWNER.toLowerCase()}.github.io/${REPO}/catalog.json\n`);
 }
 
@@ -479,10 +611,10 @@ async function rollback(version) {
 
 const { command, options } = argsOf(process.argv.slice(2));
 try {
-  if (command === "stage-initial") await stageInitial(resolve(options.workspace || usage("--workspace is required")), resolve(options["website-root"] || process.cwd()));
-  else if (command === "validate") await validate(resolve(options.workspace || usage("--workspace is required")));
-  else if (command === "release") await publishRelease(resolve(options.workspace || usage("--workspace is required")), { dryRun: options["dry-run"] === "true" });
-  else if (command === "publish") await publish(resolve(options.workspace || usage("--workspace is required")));
+  if (command === "validate") await validate(resolve(options.workspace || usage("--workspace is required")));
+  else if (command === "verify-remote") await verifyRemote(resolve(options.workspace || usage("--workspace is required")), { catalogUrl: options["catalog-url"], assets: options.assets === "true" });
+  else if (command === "release") await publishRelease(resolve(options.workspace || usage("--workspace is required")), { dryRun: options["dry-run"] === "true", allowSameVersion: options["allow-same-version"] === "true" });
+  else if (command === "publish") await publish(resolve(options.workspace || usage("--workspace is required")), { root: options.root || null, allowSameVersion: options["allow-same-version"] === "true" });
   else if (command === "rollback") await rollback(options.version);
   else usage(command ? `Unknown command ${command}` : undefined);
 } catch (error) {

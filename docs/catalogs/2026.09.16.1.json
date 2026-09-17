@@ -29,7 +29,8 @@
                    "assetKey":  "NXN-workstation-resources-2026.09.16.1.zip",
                    "title":  "NXN 工作站完整资料包",
                    "size":  "923.5 MB",
-                   "url":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/NXN-workstation-resources-2026.09.16.1.zip"
+                   "url":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/NXN-workstation-resources-2026.09.16.1.zip",
+                   "sha256":  "c8486b38ae2b8258fbb3a0483387cf1520ddbb45082a5da38475132a773ce74f"
                },
     "resources":  [
                       {
