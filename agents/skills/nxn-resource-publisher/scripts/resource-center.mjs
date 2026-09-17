@@ -1,28 +1,35 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { createReadStream, existsSync, readFileSync } from "node:fs";
+import { once } from "node:events";
+import { createReadStream, createWriteStream, existsSync, readFileSync } from "node:fs";
 import { copyFile, mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { basename, dirname, join, relative, resolve, sep } from "node:path";
+import { Readable } from "node:stream";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import JSZip from "jszip";
 
 const OWNER = "3Fu";
 const REPO = "nxn_resource";
 const API = `https://api.github.com/repos/${OWNER}/${REPO}`;
 const MAX_PREVIEW_BYTES = 95 * 1024 * 1024;
-const TYPES = new Set(["ppt", "poster", "video", "document"]);
-const PREVIEWS = new Set(["pdf", "image", "video", "document"]);
+// 资源类型与预览类型不再使用固定枚举，新增素材种类不需要改这里。
+const KIND_PATTERN = /^[a-z][a-z0-9-]{0,31}$/;
+// 预览托管在 Pages（docs/previews）的两类：PPT 用 PDF，图片用浏览器兼容图片。
+const PAGE_PREVIEW_KINDS = new Set(["pdf", "image"]);
+// 直接引用 Release 原件的两类：video 在线播放，download 只给下载入口。
+const RELEASE_PREVIEW_KINDS = new Set(["video", "download"]);
 const URL_HOSTS = new Set(["3fu.github.io", "cdn.jsdelivr.net", "raw.githubusercontent.com", "github.com", "ghproxy.net", "gh-proxy.com"]);
 
 function loadLocalEnv() {
-  const envFile = join(dirname(fileURLToPath(import.meta.url)), "..", ".env");
-  if (!existsSync(envFile)) return;
-  for (const line of readFileSync(envFile, "utf8").split(/\r?\n/)) {
-    const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);
-    if (!match || match[1].startsWith("#")) continue;
-    const value = match[2].replace(/^(['"])(.*)\1$/, "$2");
-    if (process.env[match[1]] === undefined) process.env[match[1]] = value;
+  const here = dirname(fileURLToPath(import.meta.url));
+  for (const envFile of [join(here, "..", ".env"), join(here, "..", "..", ".env")]) {
+    if (!existsSync(envFile)) continue;
+    for (const line of readFileSync(envFile, "utf8").split(/\r?\n/)) {
+      const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);
+      if (!match || match[1].startsWith("#")) continue;
+      const value = match[2].replace(/^(['"])(.*)\1$/, "$2");
+      if (process.env[match[1]] === undefined) process.env[match[1]] = value;
+    }
   }
 }
 
@@ -30,7 +37,7 @@ loadLocalEnv();
 
 function usage(message) {
   if (message) process.stderr.write(`${message}\n\n`);
-  process.stderr.write("Usage:\n  resource-center.mjs stage-initial --workspace DIR --website-root DIR\n  resource-center.mjs validate --workspace DIR\n  resource-center.mjs publish --workspace DIR\n  resource-center.mjs rollback --version VERSION\n");
+  process.stderr.write("Usage:\n  resource-center.mjs stage-initial --workspace DIR --website-root DIR\n  resource-center.mjs validate --workspace DIR\n  resource-center.mjs release --workspace DIR\n  resource-center.mjs publish --workspace DIR\n  resource-center.mjs rollback --version VERSION\n\nrelease uploads originals plus the bundle and publishes the Release, leaving git to the caller.\npublish runs release first, then commits previews and the catalog through the GitHub API.\n");
   process.exit(message ? 2 : 0);
 }
 
@@ -125,7 +132,8 @@ async function validate(workspace) {
     for (const field of ["id", "type", "typeLabel", "title", "description", "format", "size", "url", "downloadUrl", "downloadName", "downloadLabel", "previewKind", "sha256", "assetKey", "updatedAt"]) safeString(resource[field], `${resource.id || "resource"}.${field}`, field.endsWith("Url") || field === "url" ? 2000 : 500);
     assert(/^[a-z0-9][a-z0-9-]*$/.test(resource.id) && !ids.has(resource.id), `Resource ID ${resource.id} is invalid or duplicated`);
     ids.add(resource.id);
-    assert(TYPES.has(resource.type) && PREVIEWS.has(resource.previewKind), `Resource ${resource.id} type is invalid`);
+    assert(KIND_PATTERN.test(resource.type), `Resource ${resource.id} type is invalid`);
+    assert(KIND_PATTERN.test(resource.previewKind), `Resource ${resource.id} previewKind is invalid`);
     assert(/^[a-f0-9]{64}$/.test(resource.sha256), `Resource ${resource.id} sha256 is invalid`);
     assert(Number.isFinite(Date.parse(resource.updatedAt)), `Resource ${resource.id} updatedAt is invalid`);
     safeAssetKey(resource.assetKey, `${resource.id}.assetKey`);
@@ -143,10 +151,14 @@ async function validate(workspace) {
     assert(existsSync(asset), `Missing original asset ${resource.assetKey}`);
     assert(await sha256(asset) === resource.sha256, `SHA-256 mismatch for ${resource.assetKey}`);
     assets.push(asset);
-    if (resource.previewKind !== "document") {
+    if (PAGE_PREVIEW_KINDS.has(resource.previewKind)) {
       const preview = previewFileFromUrl(workspace, resource.url);
       assert(preview && existsSync(preview), `Missing preview for ${resource.id}`);
-      if (resource.previewKind === "video") assert((await stat(preview)).size < MAX_PREVIEW_BYTES, `Video preview for ${resource.id} must be smaller than 95 MiB`);
+      assert((await stat(preview)).size < MAX_PREVIEW_BYTES, `Preview for ${resource.id} must be smaller than 95 MiB`);
+    } else if (RELEASE_PREVIEW_KINDS.has(resource.previewKind)) {
+      assert(downloadUrl.pathname.endsWith(`/${resource.assetKey}`), `${resource.id}.downloadUrl must end with ${resource.assetKey}`);
+      const streaming = safeUrl(resource.url, `${resource.id}.url`);
+      assert(streaming.hostname === "github.com" && streaming.pathname.endsWith(`/${resource.assetKey}`), `${resource.id}.url must stream the same Release asset as downloadUrl`);
     }
     if (resource.coverUrl) {
       const cover = previewFileFromUrl(workspace, resource.coverUrl);
@@ -214,11 +226,113 @@ async function filesUnder(directory) {
   return output;
 }
 
-async function createBundle(workspace, catalog, assets) {
-  const zip = new JSZip();
-  for (const asset of assets) zip.file(basename(asset), await readFile(asset));
+/* ---------- 流式 ZIP（STORE，无第三方依赖，内存占用恒定） ---------- */
+
+const CRC_TABLE = (() => {
+  const table = new Uint32Array(256);
+  for (let index = 0; index < 256; index += 1) {
+    let value = index;
+    for (let bit = 0; bit < 8; bit += 1) value = value & 1 ? 0xedb88320 ^ value >>> 1 : value >>> 1;
+    table[index] = value >>> 0;
+  }
+  return table;
+})();
+
+function crc32(chunk, seed) {
+  let value = seed;
+  for (let index = 0; index < chunk.length; index += 1) value = CRC_TABLE[(value ^ chunk[index]) & 0xff] ^ value >>> 8;
+  return value >>> 0;
+}
+
+async function crc32OfFile(file) {
+  let value = 0xffffffff;
+  for await (const chunk of createReadStream(file, { highWaterMark: 1 << 22 })) value = crc32(chunk, value);
+  return (value ^ 0xffffffff) >>> 0;
+}
+
+function dosStamp(date) {
+  const year = Math.max(date.getFullYear(), 1980);
+  return {
+    time: ((date.getHours() << 11) | (date.getMinutes() << 5) | (date.getSeconds() >> 1)) & 0xffff,
+    date: (((year - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate()) & 0xffff,
+  };
+}
+
+async function createBundle(workspace, catalog, assets, displayNames) {
   const destination = join(workspace, "assets", catalog.bundle.assetKey);
-  await writeFile(destination, await zip.generateAsync({ type: "nodebuffer", compression: "STORE", streamFiles: true }));
+  const stamp = dosStamp(new Date(catalog.updatedAt));
+  const out = createWriteStream(destination);
+  const central = [];
+  let offset = 0;
+  const push = async (chunk) => {
+    offset += chunk.length;
+    if (!out.write(chunk)) await once(out, "drain");
+  };
+  try {
+    for (const asset of assets) {
+      const key = basename(asset);
+      const name = Buffer.from(displayNames.get(key) || key, "utf8");
+      const size = (await stat(asset)).size;
+      const crc = await crc32OfFile(asset);
+      const local = Buffer.alloc(30);
+      local.writeUInt32LE(0x04034b50, 0);
+      local.writeUInt16LE(20, 4);
+      local.writeUInt16LE(0x0800, 6);
+      local.writeUInt16LE(0, 8);
+      local.writeUInt16LE(stamp.time, 10);
+      local.writeUInt16LE(stamp.date, 12);
+      local.writeUInt32LE(crc, 14);
+      local.writeUInt32LE(size, 18);
+      local.writeUInt32LE(size, 22);
+      local.writeUInt16LE(name.length, 26);
+      local.writeUInt16LE(0, 28);
+      const entryOffset = offset;
+      await push(local);
+      await push(name);
+      for await (const chunk of createReadStream(asset, { highWaterMark: 1 << 22 })) await push(chunk);
+      central.push({ name, crc, size, offset: entryOffset });
+      process.stdout.write(`Bundled ${key}.\n`);
+    }
+    assert(offset < 0xffffffff, "Bundle exceeds the classic ZIP limit; a new layout is required");
+    const centralOffset = offset;
+    for (const entry of central) {
+      const header = Buffer.alloc(46);
+      header.writeUInt32LE(0x02014b50, 0);
+      header.writeUInt16LE(20, 4);
+      header.writeUInt16LE(20, 6);
+      header.writeUInt16LE(0x0800, 8);
+      header.writeUInt16LE(0, 10);
+      header.writeUInt16LE(stamp.time, 12);
+      header.writeUInt16LE(stamp.date, 14);
+      header.writeUInt32LE(entry.crc, 16);
+      header.writeUInt32LE(entry.size, 20);
+      header.writeUInt32LE(entry.size, 24);
+      header.writeUInt16LE(entry.name.length, 28);
+      header.writeUInt16LE(0, 30);
+      header.writeUInt16LE(0, 32);
+      header.writeUInt16LE(0, 34);
+      header.writeUInt16LE(0, 36);
+      header.writeUInt32LE(0, 38);
+      header.writeUInt32LE(entry.offset, 42);
+      await push(header);
+      await push(entry.name);
+    }
+    const end = Buffer.alloc(22);
+    end.writeUInt32LE(0x06054b50, 0);
+    end.writeUInt16LE(0, 4);
+    end.writeUInt16LE(0, 6);
+    end.writeUInt16LE(central.length, 8);
+    end.writeUInt16LE(central.length, 10);
+    end.writeUInt32LE(offset - centralOffset, 12);
+    end.writeUInt32LE(centralOffset, 16);
+    end.writeUInt16LE(0, 20);
+    await push(end);
+  } finally {
+    await new Promise((done, fail) => {
+      out.on("error", fail);
+      out.end(done);
+    });
+  }
   catalog.bundle.sha256 = await sha256(destination);
   catalog.bundle.size = `${((await stat(destination)).size / 1024 / 1024).toFixed(1)} MB`;
   return destination;
@@ -230,11 +344,12 @@ function token() {
   return value;
 }
 
-async function github(path, { method = "GET", body, headers = {}, raw = false } = {}) {
+async function github(path, { method = "GET", body, headers = {}, raw = false, stream = false } = {}) {
   const response = await fetch(path.startsWith("https:") ? path : `${API}${path}`, {
     method,
     headers: { Authorization: `Bearer ${token()}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...headers },
     body: raw ? body : body === undefined ? undefined : JSON.stringify(body),
+    ...(stream ? { duplex: "half" } : {}),
   });
   const text = await response.text();
   if (!response.ok) throw new Error(`GitHub ${method} ${path} failed (${response.status}): ${text.slice(0, 300)}`);
@@ -298,36 +413,58 @@ async function uploadAsset(release, file) {
     return;
   }
   const uploadUrl = release.upload_url.replace("{?name,label}", `?name=${encodeURIComponent(basename(file))}`);
-  await github(uploadUrl, { method: "POST", body: await readFile(file), raw: true, headers: { "Content-Type": "application/octet-stream", "Content-Length": String(info.size) } });
+  process.stdout.write(`Uploading ${basename(file)} (${(info.size / 1024 / 1024).toFixed(1)} MB)...\n`);
+  await github(uploadUrl, {
+    method: "POST",
+    body: Readable.toWeb(createReadStream(file, { highWaterMark: 1 << 22 })),
+    raw: true,
+    stream: true,
+    headers: { "Content-Type": "application/octet-stream", "Content-Length": String(info.size) },
+  });
   process.stdout.write(`Uploaded ${basename(file)}.\n`);
 }
 
-async function publish(workspace) {
+async function publishRelease(workspace, { finalize = true, dryRun = false } = {}) {
+  const { catalog, assets } = await validate(workspace);
+  const tag = `resources-${catalog.catalogVersion}`;
+  assert(catalog.resources.every((item) => new URL(item.downloadUrl).pathname.includes(`/releases/download/${tag}/`)), `Every downloadUrl must target ${tag}`);
+  assert(new URL(catalog.bundle.url).pathname.includes(`/releases/download/${tag}/`), `bundle.url must target ${tag}`);
+  const displayNames = new Map(catalog.resources.map((item) => [item.assetKey, item.downloadName]));
+  const bundle = await createBundle(workspace, catalog, assets, displayNames);
+  await writeFile(join(workspace, "docs", "catalog.json"), `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
+  if (dryRun) {
+    process.stdout.write(`Dry run: ${basename(bundle)} is ready (${catalog.bundle.size}, sha256 ${catalog.bundle.sha256}); release ${tag} was not created.\n`);
+    return { catalog, release: null, bundle };
+  }
   const repo = await github("");
   assert(repo.full_name === `${OWNER}/${REPO}` && !repo.private && !repo.archived, `${OWNER}/${REPO} must be a writable public repository`);
-  const { catalog, assets } = await validate(workspace);
   const previous = await currentCatalog();
   if (previous) {
     assert(previous.schemaVersion === 1 && typeof previous.catalogVersion === "string" && /^\d+(?:\.\d+)+$/.test(previous.catalogVersion), "Current catalog is invalid");
     assert(compareVersions(catalog.catalogVersion, previous.catalogVersion) > 0, `catalogVersion must be newer than ${previous.catalogVersion}`);
   }
-  const tag = `resources-${catalog.catalogVersion}`;
-  assert(catalog.resources.every((item) => new URL(item.downloadUrl).pathname.includes(`/releases/download/${tag}/`)), `Every downloadUrl must target ${tag}`);
-  assert(new URL(catalog.bundle.url).pathname.includes(`/releases/download/${tag}/`), `bundle.url must target ${tag}`);
-  const bundle = await createBundle(workspace, catalog, assets);
-  await writeFile(join(workspace, "docs", "catalog.json"), `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
 
   const release = await getOrCreateDraft(tag);
   const currentTagAssets = assets.filter((asset) => catalog.resources.some((item) => item.assetKey === basename(asset) && new URL(item.downloadUrl).pathname.includes(`/releases/download/${tag}/`)));
   for (const asset of [...currentTagAssets, bundle]) await uploadAsset(release, asset);
+  if (finalize) {
+    await github(`/releases/${release.id}`, { method: "PATCH", body: { draft: false } });
+    process.stdout.write(`Release ${tag} published with ${currentTagAssets.length + 1} assets: https://github.com/${OWNER}/${REPO}/releases/tag/${tag}\n`);
+  } else {
+    process.stdout.write(`Draft ${tag} staged with ${currentTagAssets.length + 1} assets; commit, push and then finalize the Release.\n`);
+  }
+  return { catalog, release, bundle };
+}
 
+async function publish(workspace) {
+  const { catalog, release } = await publishRelease(workspace, { finalize: false });
   const previewRoot = join(workspace, "docs", "previews");
   await putFiles(workspace, await filesUnder(previewRoot), `Publish ${catalog.catalogVersion} previews`);
   const serialized = `${JSON.stringify(catalog, null, 2)}\n`;
   await putContent(`docs/catalogs/${catalog.catalogVersion}.json`, serialized, `Archive resource catalog ${catalog.catalogVersion}`);
   await github(`/releases/${release.id}`, { method: "PATCH", body: { draft: false } });
   await putContent("docs/catalog.json", serialized, `Activate resource catalog ${catalog.catalogVersion}`);
-  process.stdout.write(`Published ${tag}. Catalog: https://${OWNER.toLowerCase()}.github.io/${REPO}/catalog.json\n`);
+  process.stdout.write(`Published resources-${catalog.catalogVersion}. Catalog: https://${OWNER.toLowerCase()}.github.io/${REPO}/catalog.json\n`);
 }
 
 async function rollback(version) {
@@ -344,6 +481,7 @@ const { command, options } = argsOf(process.argv.slice(2));
 try {
   if (command === "stage-initial") await stageInitial(resolve(options.workspace || usage("--workspace is required")), resolve(options["website-root"] || process.cwd()));
   else if (command === "validate") await validate(resolve(options.workspace || usage("--workspace is required")));
+  else if (command === "release") await publishRelease(resolve(options.workspace || usage("--workspace is required")), { dryRun: options["dry-run"] === "true" });
   else if (command === "publish") await publish(resolve(options.workspace || usage("--workspace is required")));
   else if (command === "rollback") await rollback(options.version);
   else usage(command ? `Unknown command ${command}` : undefined);
