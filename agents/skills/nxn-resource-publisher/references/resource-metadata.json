@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "note": "按原始文件名登记的元数据：新增素材时先在这里补一条，再运行 resource-sync.mjs。",
+  "note": "按原始文件名登记：新增或替换素材前由 Agent 补充/复用 id、标题和说明，再运行 resource-sync.mjs。",
   "order": [
     "nxnos-install-guide",
     "nxnos-intro",
@@ -188,9 +188,9 @@
       "version": "V20260630-2",
       "downloadLabel": "下载 PPTX"
     },
-    "创业陪跑工作站运营培训手册V260820.pptx": {
+    "创业陪跑工作站运营培训手册V260917.pptx": {
       "id": "operations-training",
-      "assetKey": "operations-training-20260820.pptx",
+      "assetKey": "operations-training-20260917.pptx",
       "type": "ppt",
       "typeLabel": "演示文稿",
       "title": "创业陪跑工作站运营培训手册",
