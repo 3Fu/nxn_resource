@@ -310,7 +310,13 @@ function validateMetadata(metadata) {
     const assetKey = safeAssetKey(entry.assetKey || defaultAssetKey(name, entry.id), `Metadata ${name}.assetKey`);
     assert(!assetKeys.has(assetKey), `Duplicate metadata assetKey ${assetKey}`);
     assetKeys.add(assetKey);
-    if (entry.version) safeString(entry.version, `Metadata ${name}.version`, 64);
+    assert(
+      Object.hasOwn(entry, "version")
+        && typeof entry.version === "string"
+        && entry.version.length <= 64
+        && !/[<>]/.test(entry.version),
+      `Metadata ${name}.version is required and must be a string (use an empty string when unknown)`,
+    );
     if (entry.previewKind) assert(/^[a-z][a-z0-9-]{0,31}$/.test(entry.previewKind), `Metadata ${name}.previewKind is invalid`);
   }
 }
@@ -695,7 +701,7 @@ async function prepare(plan, options) {
   await writeFile(workspaceManifest, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 
   plan.metadata.order = plan.order;
-  plan.metadata.note = "按原始文件名登记：新增或替换素材前由 Agent 补充/复用 id、标题和说明，再运行 resource-sync.mjs。";
+  plan.metadata.note = "按原始文件名登记：新增或替换素材前由 Agent 补充/复用 id、标题、说明和 version；没有资料版本时 version 填空字符串。";
   await writeFile(metadataFile, `${JSON.stringify(plan.metadata, null, 2)}\n`, "utf8");
 
   process.stdout.write(`Prepared ${resources.length} active resources for ${plan.version} at ${workspace}.\n`);

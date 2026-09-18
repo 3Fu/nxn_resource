@@ -32,7 +32,7 @@ For unstable GitHub connections, use `--retries`, `--concurrency 1`, `--stall-ti
 ## Standard Workflow
 
 1. Resolve exactly one input file or directory. Recursively scan a directory, but do not infer retirement from files that are merely absent. Use `--retire <id[,id...]>` only when the user explicitly asks to remove an active resource.
-2. Inspect the input content. For every new or replacement filename, add or reuse a stable entry in `references/resource-metadata.json`. Include `id`, `type`, `typeLabel`, `title`, `description`, `format`, and any needed `previewKind` or `previewSections`. Never change an existing resource ID to represent unrelated content.
+2. Inspect the input content. For every new or replacement filename, add or reuse a stable entry in `references/resource-metadata.json`. Include `id`, `type`, `typeLabel`, `title`, `description`, `version`, `format`, and any needed `previewKind` or `previewSections`. `version` is required: preserve the resource's own version text when known, otherwise use an empty string. Never change an existing resource ID to represent unrelated content.
 3. For a new active resource, add its original filename to the `doc/README.md` index before preparing the release. A replacement under the same filename may reuse the existing entry and ID.
 4. Run the no-write plan:
 

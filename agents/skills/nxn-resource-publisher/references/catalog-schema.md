@@ -48,11 +48,12 @@ The website continues to require generated `docs/catalog.json`, `docs/catalogs/`
 
 ## Resource
 
-Website fields are `id`, optional `version`, `type`, `typeLabel`, `title`, `description`, `format`, `size`, optional `duration`, `url`, `downloadUrl`, optional `coverUrl`, `downloadName`, `downloadLabel`, `previewKind`, and optional `previewSections`.
+Website fields are `id`, `version`, `type`, `typeLabel`, `title`, `description`, `format`, `size`, optional `duration`, `url`, `downloadUrl`, optional `coverUrl`, `downloadName`, `downloadLabel`, `previewKind`, and optional `previewSections`.
 
 Publishing fields are `assetKey`, lowercase 64-character `sha256`, and ISO-8601 `updatedAt`.
 
 - `id`: stable lowercase letters, digits, and hyphens; never reuse it for unrelated content.
+- `version`: required string on every resource. Preserve the resource's own version text when known; use an empty string when the source has no version. Do not substitute `catalogVersion`.
 - `type`: an extensible lowercase type token such as `ppt`, `poster`, `video`, or `document`.
 - `previewKind`: an extensible lowercase token such as `pdf`, `image`, `video`, or `download`.
 - `downloadName`: one URL-safe basename only; it must not contain `/`, `\`, `.` or `..` as a path.

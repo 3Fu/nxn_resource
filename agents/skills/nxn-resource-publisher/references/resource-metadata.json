@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "note": "按原始文件名登记的元数据：新增素材时先在这里补一条，再运行 resource-sync.mjs。",
+  "note": "按原始文件名登记的元数据：新增素材时先补齐字段再运行 resource-sync.mjs；version 必填，有资料版本时保留原值，没有时填空字符串。",
   "order": [
     "nxnos-install-guide",
     "nxnos-intro",
@@ -188,15 +188,15 @@
       "version": "V20260630-2",
       "downloadLabel": "下载 PPTX"
     },
-    "创业陪跑工作站运营培训手册V260820.pptx": {
+    "创业陪跑工作站运营培训手册V260917.pptx": {
       "id": "operations-training",
-      "assetKey": "operations-training-20260820.pptx",
+      "assetKey": "operations-training-20260917.pptx",
       "type": "ppt",
       "typeLabel": "演示文稿",
       "title": "创业陪跑工作站运营培训手册",
       "description": "面向工作站站长的内部运营培训课件，分六部分：工作站定位、政策资源体系、孵化器合作获客、企业四步孵化流程、签约后六步运营、盈利模式与团队激励。",
       "format": "PDF",
-      "version": "V260820",
+      "version": "V260917",
       "downloadLabel": "下载 PPTX"
     },
     "超算工作站介绍V20260623.pptx": {

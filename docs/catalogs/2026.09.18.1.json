@@ -35,6 +35,7 @@
   "resources": [
     {
       "id": "nxnos-install-guide",
+      "version": "",
       "type": "video",
       "typeLabel": "视频",
       "title": "NXNOS 下载安装",
@@ -54,6 +55,7 @@
     },
     {
       "id": "nxnos-intro",
+      "version": "",
       "type": "video",
       "typeLabel": "视频",
       "title": "NXNOS 介绍视频",
@@ -73,6 +75,7 @@
     },
     {
       "id": "nxnos-modules",
+      "version": "",
       "type": "video",
       "typeLabel": "视频",
       "title": "NXNOS 功能模块介绍",
@@ -92,6 +95,7 @@
     },
     {
       "id": "ppt-agent-publishing",
+      "version": "",
       "type": "video",
       "typeLabel": "视频",
       "title": "PPT 智能体开发上架",
@@ -111,6 +115,7 @@
     },
     {
       "id": "ai-joint-venture",
+      "version": "v1-2026.6.16",
       "type": "video",
       "typeLabel": "视频",
       "title": "人工智能合资公司",
@@ -130,6 +135,7 @@
     },
     {
       "id": "ai-agents-delivery",
+      "version": "",
       "type": "video",
       "typeLabel": "视频",
       "title": "人工智能合资公司各智能体交付视频",
@@ -149,6 +155,7 @@
     },
     {
       "id": "daima-company-intro",
+      "version": "",
       "type": "video",
       "typeLabel": "视频",
       "title": "呆马公司介绍视频",
@@ -168,6 +175,7 @@
     },
     {
       "id": "vertical-model-news",
+      "version": "",
       "type": "video",
       "typeLabel": "视频",
       "title": "垂直类模型部分新闻报道",
@@ -187,6 +195,7 @@
     },
     {
       "id": "client-acquisition-demo",
+      "version": "",
       "type": "video",
       "typeLabel": "视频",
       "title": "拓客部门实机演示",
@@ -206,6 +215,7 @@
     },
     {
       "id": "infinite-canvas-tutorial",
+      "version": "v20260916",
       "type": "video",
       "typeLabel": "视频",
       "title": "无限画布使用教程",
@@ -225,6 +235,7 @@
     },
     {
       "id": "zhihu-agent-dev",
+      "version": "",
       "type": "video",
       "typeLabel": "视频",
       "title": "知乎智能体的开发",
@@ -244,6 +255,7 @@
     },
     {
       "id": "web4-venture-plan",
+      "version": "v20260713",
       "type": "ppt",
       "typeLabel": "演示文稿",
       "title": "Web4.0 人工智能网络创业计划",
@@ -261,6 +273,7 @@
     },
     {
       "id": "ai-nxnos-training",
+      "version": "V20260909",
       "type": "ppt",
       "typeLabel": "演示文稿",
       "title": "人工智能工作原理与 NXNOS 系统培训",
@@ -278,6 +291,7 @@
     },
     {
       "id": "traditional-ai-upgrade",
+      "version": "V20260707",
       "type": "ppt",
       "typeLabel": "演示文稿",
       "title": "传统企业 AI 转型升级方案",
@@ -295,6 +309,7 @@
     },
     {
       "id": "incubation-station",
+      "version": "V20260630-2",
       "type": "ppt",
       "typeLabel": "演示文稿",
       "title": "创业陪跑工作站",
@@ -312,6 +327,7 @@
     },
     {
       "id": "operations-training",
+      "version": "V260917",
       "type": "ppt",
       "typeLabel": "演示文稿",
       "title": "创业陪跑工作站运营培训手册",
@@ -329,6 +345,7 @@
     },
     {
       "id": "supercomputing-workstation",
+      "version": "V20260623",
       "type": "ppt",
       "typeLabel": "演示文稿",
       "title": "超算工作站介绍",
@@ -346,6 +363,7 @@
     },
     {
       "id": "remote-control-guide",
+      "version": "",
       "type": "poster",
       "typeLabel": "图片",
       "title": "遥控器引导",
@@ -363,6 +381,7 @@
     },
     {
       "id": "wechat-qr-manager",
+      "version": "",
       "type": "poster",
       "typeLabel": "图片",
       "title": "闫经理微信二维码",
