@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { copyFileSync, createReadStream, createWriteStream, mkdirSync, renameSync, rmSync } from "node:fs";
+import { copyFileSync, createReadStream, mkdirSync, renameSync, rmSync } from "node:fs";
 import {
   copyFile,
   link as createLink,
@@ -12,14 +12,12 @@ import {
   stat,
   writeFile,
 } from "node:fs/promises";
-import { Readable } from "node:stream";
-import { pipeline } from "node:stream/promises";
 import { basename, dirname, extname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { downloadUrlToFile } from "./resource-network.mjs";
 
 const OWNER = "3Fu";
 const REPO = "nxn_resource";
-const MAX_GIT_FILE_BYTES = 100 * 1024 * 1024;
 const SUPPORTED_EXTENSIONS = new Set([".mp4", ".mov", ".pptx", ".ppt", ".pdf", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".docx", ".doc"]);
 const TYPE_LABELS = { ppt: "演示文稿", poster: "图片", video: "视频", document: "文档" };
 const DEFAULT_LABELS = { ppt: "下载 PPTX", poster: "下载原图", video: "下载原视频", document: "下载原文件" };
@@ -35,9 +33,12 @@ function usage(message) {
   process.stderr.write(
     "Usage:\n"
     + "  resource-sync.mjs plan --input FILE_OR_DIRECTORY [--retire ID[,ID...]] [--version VERSION] [--root DIR]\n"
-    + "  resource-sync.mjs prepare --input FILE_OR_DIRECTORY [--retire ID[,ID...]] [--version VERSION] [--workspace DIR] [--root DIR]\n\n"
+    + "  resource-sync.mjs prepare --input FILE_OR_DIRECTORY [--retire ID[,ID...]] [--version VERSION] [--workspace DIR] [--root DIR]\n"
+    + "                              [--proxy URL] [--proxy-env true|false] [--retries N]\n"
+    + "                              [--connect-timeout SECONDS] [--stall-timeout SECONDS]\n\n"
     + "plan inspects and validates the update without writing files.\n"
-    + "prepare writes a candidate workspace for resource-center.mjs; --root defaults to this repository.\n",
+    + "prepare writes a candidate workspace for resource-center.mjs; --root defaults to this repository.\n"
+    + "HTTPS_PROXY, ALL_PROXY, and NO_PROXY are detected automatically; proxied transfers use system curl.\n",
   );
   process.exit(message ? 2 : 0);
 }
@@ -61,6 +62,19 @@ function retiredIdsOf(value) {
   const ids = [...new Set(value.split(",").map((id) => id.trim()).filter(Boolean))];
   for (const id of ids) assert(/^[a-z0-9][a-z0-9-]*$/.test(id), `Invalid retire ID ${id}`);
   return ids;
+}
+
+function positiveInteger(value, name, { min = 1, max = Number.MAX_SAFE_INTEGER } = {}) {
+  const parsed = Number(value);
+  assert(Number.isInteger(parsed) && parsed >= min && parsed <= max, `${name} must be an integer from ${min} to ${max}`);
+  return parsed;
+}
+
+function booleanOption(value, name, defaultValue) {
+  if (value === undefined) return defaultValue;
+  if (value === true || value === "true") return true;
+  if (value === false || value === "false") return false;
+  throw new Error(`${name} must be true or false`);
 }
 
 function isWithin(child, parent) {
@@ -240,11 +254,23 @@ async function findNamedFile(root, name, { skip = [] } = {}) {
   return null;
 }
 
-async function downloadFile(url, destination) {
-  const response = await fetch(url, { headers: { Accept: "application/octet-stream" }, redirect: "follow" });
-  assert(response.ok && response.body, `Unable to hydrate ${url}: HTTP ${response.status}`);
-  await mkdir(dirname(destination), { recursive: true });
-  await pipeline(Readable.fromWeb(response.body), createWriteStream(destination));
+async function downloadFile(url, destination, options) {
+  await downloadUrlToFile(url, destination, {
+    headers: { Accept: "application/octet-stream", "User-Agent": "nxn-resource-sync" },
+    proxy: options.proxy,
+    proxyEnv: booleanOption(options["proxy-env"], "--proxy-env", true),
+    retries: positiveInteger(options.retries === undefined ? 3 : options.retries, "--retries", { min: 1, max: 10 }),
+    connectTimeoutMs: positiveInteger(
+      options["connect-timeout"] === undefined ? 20 : options["connect-timeout"],
+      "--connect-timeout",
+      { min: 1, max: 300 },
+    ) * 1000,
+    stallTimeoutMs: positiveInteger(
+      options["stall-timeout"] === undefined ? 60 : options["stall-timeout"],
+      "--stall-timeout",
+      { min: 10, max: 3600 },
+    ) * 1000,
+  });
 }
 
 function previewFileFromUrl(root, value) {
@@ -345,7 +371,7 @@ async function createPlan(inputPath, options) {
       changed,
       originalChanged,
       reasons,
-      distribution: fileInfo.size < MAX_GIT_FILE_BYTES ? "git" : "release",
+      distribution: "release",
       readmeMentioned: readme.includes(name),
     });
   }
@@ -375,6 +401,7 @@ async function createPlan(inputPath, options) {
     changed: updates.filter((update) => update.existing && update.changed),
     unchanged: updates.filter((update) => update.existing && !update.changed),
     retired: catalog.resources.filter((resource) => retiredIds.has(resource.id)),
+    options,
   };
 }
 
@@ -517,17 +544,14 @@ async function inspectOrCreatePreview({ workspace, version, resourceSource, upda
   };
 }
 
-async function locateUnchangedSource({ root, workspace, resource }) {
-  const documentRoot = join(root, "doc");
-  const inDocument = await findNamedFile(documentRoot, resource.downloadName);
-  if (inDocument) return { source: inDocument, distribution: "git" };
-
+async function locateUnchangedSource({ workspace, resource, networkOptions }) {
   const inWork = await findNamedFile(workRoot, resource.assetKey, { skip: [workspace] });
-  if (inWork) return { source: inWork, distribution: "release" };
+  if (inWork && await sha256(inWork) === resource.sha256) return { source: inWork };
 
   const hydrated = join(workspace, "assets", resource.assetKey);
-  await downloadFile(resource.downloadUrl, hydrated);
-  return { source: hydrated, distribution: "release", hydrated: true };
+  await downloadFile(resource.downloadUrl, hydrated, networkOptions);
+  assert(await sha256(hydrated) === resource.sha256, `Release SHA-256 mismatch for ${resource.id}`);
+  return { source: hydrated, hydrated: true };
 }
 
 async function prepare(plan, options) {
@@ -562,15 +586,12 @@ async function prepare(plan, options) {
     const update = updatedById.get(id);
     const existing = existingById.get(id);
     let source;
-    let distribution;
 
     if (update) {
       source = update.source;
-      distribution = update.distribution;
     } else {
-      const located = await locateUnchangedSource({ root: plan.root, workspace, resource: existing });
+      const located = await locateUnchangedSource({ workspace, resource: existing, networkOptions: plan.options });
       source = located.source;
-      distribution = located.distribution;
     }
 
     const assetKey = update?.assetKey || existing.assetKey;
@@ -635,7 +656,7 @@ async function prepare(plan, options) {
       type,
       bytes: (await stat(workspaceAsset)).size,
       sha256: actualHash,
-      distribution: distribution === "git" && (await stat(workspaceAsset)).size < MAX_GIT_FILE_BYTES ? "git" : "release",
+      distribution: "release",
       downloadUrl: resource.downloadUrl,
       previewUrl: resource.url,
     });
@@ -666,7 +687,7 @@ async function prepare(plan, options) {
     schemaVersion: 1,
     catalogVersion: plan.version,
     generatedAt: now,
-    sourceDirectory: "doc",
+    sourceDirectory: "release",
     assets: manifestAssets,
   };
   const workspaceManifest = join(workspace, "doc", "manifest.json");

@@ -1,6 +1,6 @@
 # Catalog Contract
 
-The public repository is `https://github.com/3Fu/nxn_resource`. GitHub Pages serves `main/docs`; original files and the complete ZIP are Release assets.
+The public repository is `https://github.com/3Fu/nxn_resource`. GitHub Pages serves `main/docs`; original files and the complete ZIP are Release assets. `doc/` is an index and manifest area, not an original-file mirror.
 
 ## Workspace Layout
 
@@ -9,7 +9,7 @@ The public repository is `https://github.com/3Fu/nxn_resource`. GitHub Pages ser
 ```text
 workspace/
 |-- assets/<assetKey>                 Active original files used for the release build
-|-- doc/manifest.json                 Distribution and source-file mapping for root mirroring
+|-- doc/manifest.json                 Resource ID, original-name, Release URL, and hash index
 `-- docs/
     |-- catalog.json                  Candidate/current catalog
     |-- catalogs/<version>.json       Candidate archive, updated with the bundle hash before publish
@@ -22,9 +22,20 @@ The repository root contains the same `docs/` publication tree and `doc/` source
 - `workspace/docs/catalogs/<version>.json` to `root/docs/catalogs/<version>.json`
 - `workspace/docs/previews/**` to `root/docs/previews/**`
 - `workspace/doc/manifest.json` to `root/doc/manifest.json`
-- only `distribution=git` originals from `doc/manifest.json` to `root/doc/<originalName>`
 
-Release-only originals are intentionally absent from `root/doc/`. The mirror does not delete old preview files or historical source files.
+Originals are intentionally absent from `root/doc/`; the mirror does not copy Release assets back into the Git repository. The mirror does not delete old preview files or historical source files. `doc/` contains only `README.md` and `manifest.json`.
+
+## Consumer Download
+
+Reception or processing agents use `resource-download.mjs` with either the public catalog or `doc/manifest.json`. The script downloads Release assets under their original filenames, verifies the recorded SHA-256, skips already-valid files, and returns local paths plus resource metadata as JSON:
+
+```powershell
+node agents/skills/nxn-resource-publisher/scripts/resource-download.mjs --catalog-url https://3fu.github.io/nxn_resource/catalog.json --output "<cache-dir>" --all --json
+```
+
+Proxy detection, retry behavior, and recovery steps are documented in [network-recovery.md](network-recovery.md).
+
+The website continues to require generated `docs/catalog.json`, `docs/catalogs/`, and `docs/previews/`. Do not merge or remove those directories; they are the GitHub Pages publication surface.
 
 ## Top Level
 

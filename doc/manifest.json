@@ -2,7 +2,7 @@
     "schemaVersion":  1,
     "catalogVersion":  "2026.09.16.1",
     "generatedAt":  "2026-09-16T00:00:00.000Z",
-    "sourceDirectory":  "C:\\Projects\\教育智能体\\teacher\\doc",
+    "sourceDirectory":  "release",
     "assets":  [
                    {
                        "originalName":  "NXNOS下载安装 .mp4",
@@ -11,7 +11,7 @@
                        "type":  "video",
                        "bytes":  13000515,
                        "sha256":  "7f6ffce2f010a394d16fc46ba6a69e6860afe1ec580746997567397f5c0a1c50",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/nxnos-install-guide.mp4",
                        "previewUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/nxnos-install-guide.mp4"
                    },
@@ -22,7 +22,7 @@
                        "type":  "video",
                        "bytes":  25534212,
                        "sha256":  "9e304f30904ddfac5ec636730bde8ae16d6a95a540ccdabcd047d2ff33fa3456",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/nxnos-intro.mp4",
                        "previewUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/nxnos-intro.mp4"
                    },
@@ -33,7 +33,7 @@
                        "type":  "video",
                        "bytes":  100856719,
                        "sha256":  "4d9532c46aa30e8849cd809ac69ed8d487a8399ac9ed2d2c6c925c5c0cbbb414",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/nxnos-modules.mp4",
                        "previewUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/nxnos-modules.mp4"
                    },
@@ -44,7 +44,7 @@
                        "type":  "video",
                        "bytes":  11775293,
                        "sha256":  "f7321a9c7fc8b75079c6486a940383d0d714a2ba9ee801b2baa996ab738e1c80",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/ppt-agent-publishing.mp4",
                        "previewUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/ppt-agent-publishing.mp4"
                    },
@@ -66,7 +66,7 @@
                        "type":  "video",
                        "bytes":  24798907,
                        "sha256":  "bb07e2106e9f24772a2a64f46f6168de22ecdf90c73b71e5dc6e1ea57d1a8542",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/ai-agents-delivery.mp4",
                        "previewUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/ai-agents-delivery.mp4"
                    },
@@ -88,7 +88,7 @@
                        "type":  "video",
                        "bytes":  6213942,
                        "sha256":  "8dfe2199255a0f490d9f15e898c8b8753bee652a915d3164ff022dd4383e04af",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/vertical-model-news.mp4",
                        "previewUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/vertical-model-news.mp4"
                    },
@@ -99,7 +99,7 @@
                        "type":  "video",
                        "bytes":  24798907,
                        "sha256":  "bb07e2106e9f24772a2a64f46f6168de22ecdf90c73b71e5dc6e1ea57d1a8542",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/client-acquisition-demo.mp4",
                        "previewUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/client-acquisition-demo.mp4"
                    },
@@ -110,7 +110,7 @@
                        "type":  "video",
                        "bytes":  19834805,
                        "sha256":  "14dfcfd13a53fc8c013a9e78577358ef7672ed22d9eddad25c99ac8bad880385",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/infinite-canvas-tutorial.mp4",
                        "previewUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/infinite-canvas-tutorial.mp4"
                    },
@@ -121,7 +121,7 @@
                        "type":  "video",
                        "bytes":  19355297,
                        "sha256":  "5fcbd0886010019655db81c755a2a00a9df97606e8a5e3d8d48e86cd3cd7a645",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/zhihu-agent-dev.mp4",
                        "previewUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/zhihu-agent-dev.mp4"
                    },
@@ -132,7 +132,7 @@
                        "type":  "ppt",
                        "bytes":  20963526,
                        "sha256":  "3dbbbed9075e80e2022e044e0220c31fcdcf778991067e83cbc622395accf971",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/web4-venture-plan.pptx",
                        "previewUrl":  "https://3fu.github.io/nxn_resource/previews/web4-venture-plan/2026.09.16.1/web4-venture-plan.pdf"
                    },
@@ -143,7 +143,7 @@
                        "type":  "ppt",
                        "bytes":  25295097,
                        "sha256":  "d6dcd714d0a6a668caa045e1723dd849229fc42603ca7ee854fa78c45f445505",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/ai-nxnos-training-20260909.pptx",
                        "previewUrl":  "https://3fu.github.io/nxn_resource/previews/ai-nxnos-training/2026.09.16.1/ai-nxnos-training.pdf"
                    },
@@ -154,7 +154,7 @@
                        "type":  "ppt",
                        "bytes":  73158449,
                        "sha256":  "7e81673e61533ae176c1f84d47052ad856d4ab1e59e378c1f45e82f535e0917e",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/traditional-ai-upgrade-20260707.pptx",
                        "previewUrl":  "https://3fu.github.io/nxn_resource/previews/traditional-ai-upgrade/2026.09.16.1/traditional-ai-upgrade.pdf"
                    },
@@ -165,7 +165,7 @@
                        "type":  "ppt",
                        "bytes":  25715545,
                        "sha256":  "82aeb69a9b29842e2d8fcbde3b6f3859a550e5833cecd15ddf49192f8834ec22",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/incubation-station-20260630.pptx",
                        "previewUrl":  "https://3fu.github.io/nxn_resource/previews/incubation-station/2026.09.16.1/incubation-station.pdf"
                    },
@@ -176,7 +176,7 @@
                        "type":  "ppt",
                        "bytes":  35333363,
                        "sha256":  "4df4d73953a931c5030f1aa3bed737e0a662c4da933a4b9485fd5df25c7647eb",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/operations-training-20260820.pptx",
                        "previewUrl":  "https://3fu.github.io/nxn_resource/previews/operations-training/2026.09.16.1/operations-training.pdf"
                    },
@@ -187,7 +187,7 @@
                        "type":  "ppt",
                        "bytes":  26456186,
                        "sha256":  "703fae5600535d526d9d7b1fe7ba5cbc95494e4c5fa515b5fd5e61a2ed9c7171",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/supercomputing-workstation-20260623.pptx",
                        "previewUrl":  "https://3fu.github.io/nxn_resource/previews/supercomputing-workstation/2026.09.16.1/supercomputing-workstation.pdf"
                    },
@@ -198,7 +198,7 @@
                        "type":  "poster",
                        "bytes":  1828059,
                        "sha256":  "e63aad97a209cb6c46a762f6fd9af2a4dc9a80cbf4c227ed34d433fe4ae9c434",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/remote-control-guide.png",
                        "previewUrl":  "https://3fu.github.io/nxn_resource/previews/remote-control-guide/2026.09.16.1/remote-control-guide.png"
                    },
@@ -209,7 +209,7 @@
                        "type":  "poster",
                        "bytes":  104506,
                        "sha256":  "ed85e9153649c315b4c077efedb266dd106496c36a928967cb2e456569358e66",
-                       "distribution":  "git",
+                       "distribution":  "release",
                        "downloadUrl":  "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/wechat-qr-manager.jpg",
                        "previewUrl":  "https://3fu.github.io/nxn_resource/previews/wechat-qr-manager/2026.09.16.1/wechat-qr-manager.jpg"
                    }

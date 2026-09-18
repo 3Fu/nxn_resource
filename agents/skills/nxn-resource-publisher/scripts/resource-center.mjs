@@ -47,7 +47,7 @@ loadLocalEnv();
 
 function usage(message) {
   if (message) process.stderr.write(`${message}\n\n`);
-  process.stderr.write("Usage:\n  resource-center.mjs validate --workspace DIR\n  resource-center.mjs verify-remote --workspace DIR [--catalog-url URL] [--assets true]\n  resource-center.mjs release --workspace DIR [--allow-same-version true]\n  resource-center.mjs publish --workspace DIR [--root DIR] [--allow-same-version true]\n  resource-center.mjs rollback --version VERSION\n\nrelease uploads changed originals plus the bundle and publishes the Release, leaving git to the caller.\npublish runs release first, then commits previews and the catalog through the GitHub API. With --root it mirrors the final catalog, manifest, previews, and git-distributed originals back into the source repository.\nverify-remote compares the workspace catalog with the public Pages catalog and can probe published Release assets.\n");
+  process.stderr.write("Usage:\n  resource-center.mjs validate --workspace DIR\n  resource-center.mjs verify-remote --workspace DIR [--catalog-url URL] [--assets true]\n  resource-center.mjs release --workspace DIR [--allow-same-version true]\n  resource-center.mjs publish --workspace DIR [--root DIR] [--allow-same-version true]\n  resource-center.mjs rollback --version VERSION\n\nrelease uploads changed originals plus the bundle and publishes the Release, leaving git to the caller.\npublish runs release first, then commits previews and the catalog through the GitHub API. With --root it mirrors the final catalog, manifest, previews, and index files back into the source repository; originals stay in Releases.\nverify-remote compares the workspace catalog with the public Pages catalog and can probe published Release assets.\n");
   process.exit(message ? 2 : 0);
 }
 
@@ -575,13 +575,6 @@ async function mirrorPublishedWorkspace(workspace, root) {
   await copy(join(workspace, "docs", "catalogs", `${manifest.catalogVersion}.json`), join(root, "docs", "catalogs", `${manifest.catalogVersion}.json`));
   for (const file of await filesUnder(join(workspace, "docs", "previews"))) {
     await copy(file, join(root, "docs", "previews", relative(join(workspace, "docs", "previews"), file)));
-  }
-  for (const asset of manifest.assets.filter((entry) => entry.distribution === "git")) {
-    safeAssetKey(asset.assetKey, "manifest assetKey");
-    safeDownloadName(asset.originalName, "manifest originalName");
-    const source = join(workspace, "assets", asset.assetKey);
-    assert(existsSync(source), `Missing workspace asset ${asset.assetKey}`);
-    await copy(source, join(root, "doc", asset.originalName));
   }
   await copy(manifestFile, join(root, "doc", "manifest.json"));
   process.stdout.write(`Synchronized published artifacts into ${root}.\n`);
