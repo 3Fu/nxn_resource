@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.16.1",
-  "updatedAt": "2026-09-16T00:00:00.000Z",
+  "catalogVersion": "2026.09.18.1",
+  "updatedAt": "2026-09-18T05:10:16.597Z",
   "sources": [
     {
       "id": "ghproxy-net",
@@ -26,11 +26,11 @@
     }
   ],
   "bundle": {
-    "assetKey": "NXN-workstation-resources-2026.09.16.1.zip",
+    "assetKey": "NXN-workstation-resources-2026.09.18.1.zip",
     "title": "NXN 工作站完整资料包",
-    "size": "923.5 MB",
-    "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/NXN-workstation-resources-2026.09.16.1.zip",
-    "sha256": "c8486b38ae2b8258fbb3a0483387cf1520ddbb45082a5da38475132a773ce74f"
+    "size": "922.0 MB",
+    "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.18.1/NXN-workstation-resources-2026.09.18.1.zip",
+    "sha256": "d1e6ea9a911bbeca12e5b3be0a9c78ec55358cc5480bbb54c47c13de4cb480a1"
   },
   "resources": [
     {
@@ -317,15 +317,15 @@
       "title": "创业陪跑工作站运营培训手册",
       "description": "面向工作站站长的内部运营培训课件，分六部分：工作站定位、政策资源体系、孵化器合作获客、企业四步孵化流程、签约后六步运营、盈利模式与团队激励。",
       "format": "PDF",
-      "size": "4.2 MB",
-      "url": "https://3fu.github.io/nxn_resource/previews/operations-training/2026.09.16.1/operations-training.pdf",
-      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/operations-training-20260820.pptx",
-      "downloadName": "创业陪跑工作站运营培训手册V260820.pptx",
+      "size": "5.9 MB",
+      "url": "https://3fu.github.io/nxn_resource/previews/operations-training/2026.09.18.1/operations-training.pdf",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.18.1/operations-training-20260917.pptx",
+      "downloadName": "创业陪跑工作站运营培训手册V260917.pptx",
       "downloadLabel": "下载 PPTX",
       "previewKind": "pdf",
-      "sha256": "4df4d73953a931c5030f1aa3bed737e0a662c4da933a4b9485fd5df25c7647eb",
-      "assetKey": "operations-training-20260820.pptx",
-      "updatedAt": "2026-09-16T00:00:00.000Z"
+      "sha256": "f3f811f1211072696645ebd19f712affb44e93268cdc40ac1d22c977c6addcfe",
+      "assetKey": "operations-training-20260917.pptx",
+      "updatedAt": "2026-09-18T05:10:16.597Z"
     },
     {
       "id": "supercomputing-workstation",
