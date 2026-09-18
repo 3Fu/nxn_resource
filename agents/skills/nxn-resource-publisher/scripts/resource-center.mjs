@@ -214,7 +214,7 @@ async function validate(workspace) {
   const assetKeys = new Set();
   const assets = [];
   for (const resource of catalog.resources) {
-    for (const field of ["id", "type", "typeLabel", "title", "description", "format", "size", "url", "downloadUrl", "downloadName", "downloadLabel", "previewKind", "sha256", "assetKey", "updatedAt"]) safeString(resource[field], `${resource.id || "resource"}.${field}`, field.endsWith("Url") || field === "url" ? 2000 : 500);
+    for (const field of ["id", "type", "typeLabel", "title", "description", "version", "format", "size", "url", "downloadUrl", "downloadName", "downloadLabel", "previewKind", "sha256", "assetKey", "updatedAt"]) safeString(resource[field], `${resource.id || "resource"}.${field}`, field.endsWith("Url") || field === "url" ? 2000 : 500, field === "version");
     assert(/^[a-z0-9][a-z0-9-]*$/.test(resource.id) && !ids.has(resource.id), `Resource ID ${resource.id} is invalid or duplicated`);
     ids.add(resource.id);
     assert(KIND_PATTERN.test(resource.type), `Resource ${resource.id} type is invalid`);

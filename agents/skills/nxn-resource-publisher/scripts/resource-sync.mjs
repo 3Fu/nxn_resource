@@ -631,6 +631,7 @@ async function prepare(plan, options) {
       typeLabel,
       title,
       description,
+      version: entry.version ?? existing?.version ?? "",
       format,
       size: formatBytes(sizeBytes),
       url: preview.previewUrl,
@@ -642,7 +643,6 @@ async function prepare(plan, options) {
       assetKey,
       updatedAt: update?.changed || !existing ? now : existing.updatedAt,
     };
-    if (entry.version || existing?.version) resource.version = entry.version || existing.version;
     if (preview.duration) resource.duration = preview.duration;
     if (preview.coverUrl) resource.coverUrl = preview.coverUrl;
     const previewSections = entry.previewSections || existing?.previewSections;

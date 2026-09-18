@@ -31,6 +31,7 @@
       "title": "NXNOS 下载安装",
       "description": "演示 NXNOS 的下载与安装过程，说明 Windows 环境下的基础安装步骤。",
       "format": "MP4",
+      "version": "",
       "downloadLabel": "下载原视频"
     },
     "NXNOS介绍视频.mp4": {
@@ -41,6 +42,7 @@
       "title": "NXNOS 介绍视频",
       "description": "简要介绍 NXNOS 的核心功能、支持硬件、工作流搭建方式与人工智能网络概念。",
       "format": "MP4",
+      "version": "",
       "downloadLabel": "下载原视频"
     },
     "NXNOS功能模块介绍.mp4": {
@@ -51,6 +53,7 @@
       "title": "NXNOS 功能模块介绍",
       "description": "更完整地介绍 NXNOS 的功能模块与使用能力，展开说明系统如何支撑智能体、工作流与业务应用。",
       "format": "MP4",
+      "version": "",
       "downloadLabel": "下载原视频"
     },
     "PPT 智能体开发上架.mp4": {
@@ -61,6 +64,7 @@
       "title": "PPT 智能体开发上架",
       "description": "演示如何开发并上架一个 PPT 相关智能体，体现智能体从创建、配置到交付的基本流程。",
       "format": "MP4",
+      "version": "",
       "downloadLabel": "下载原视频"
     },
     "人工智能合资公司-v1-2026.6.16.mp4": {
@@ -71,6 +75,7 @@
       "title": "人工智能合资公司",
       "description": "概览人工智能合资公司的合作模式、业务逻辑与价值主张，适合在客户了解公司后快速进入合作主题。",
       "format": "MP4",
+      "version": "v1-2026.6.16",
       "downloadLabel": "下载原视频"
     },
     "人工智能合资公司各智能体交付视频.mp4": {
@@ -81,6 +86,7 @@
       "title": "人工智能合资公司各智能体交付视频",
       "description": "展示合资公司中获客相关数字员工的交付效果，覆盖企业获客、GEO 排名优化、评论区获客与短视频平台推广。",
       "format": "MP4",
+      "version": "",
       "downloadLabel": "下载原视频"
     },
     "呆马公司介绍视频.mp4": {
@@ -91,6 +97,7 @@
       "title": "呆马公司介绍视频",
       "description": "介绍呆马公司在人工智能、大模型、语言模型训练、AI 数据处理、算力平台与产业应用方面的发展与技术实力。",
       "format": "MP4",
+      "version": "",
       "downloadLabel": "下载原视频"
     },
     "垂直类模型部分新闻报道.mp4": {
@@ -101,6 +108,7 @@
       "title": "垂直类模型部分新闻报道",
       "description": "汇总垂直类模型相关的新闻报道与外部信息，用于辅助说明垂直模型、行业模型和政策趋势。",
       "format": "MP4",
+      "version": "",
       "downloadLabel": "下载原视频"
     },
     "拓客部门实机演示.mp4": {
@@ -111,6 +119,7 @@
       "title": "拓客部门实机演示",
       "description": "展示拓客部门数字员工的实际运行效果，覆盖获客、线索发现、平台推广与营销执行。",
       "format": "MP4",
+      "version": "",
       "downloadLabel": "下载原视频"
     },
     "无限画布使用教程v20260916.mp4": {
@@ -121,6 +130,7 @@
       "title": "无限画布使用教程",
       "description": "演示无限画布的新建画布、左侧菜单、上传本地音视频作为参考文件、画布节点增删以及 Agent 查看等操作。",
       "format": "MP4",
+      "version": "v20260916",
       "downloadLabel": "下载原视频"
     },
     "知乎智能体的开发.mp4": {
@@ -131,6 +141,7 @@
       "title": "知乎智能体的开发",
       "description": "演示知乎场景智能体的开发过程，体现垂直场景智能体如何围绕具体平台和任务构建。",
       "format": "MP4",
+      "version": "",
       "downloadLabel": "下载原视频"
     },
     "Web4.0人工智能网络创业计划v20260713.pptx": {
@@ -141,6 +152,7 @@
       "title": "Web4.0 人工智能网络创业计划",
       "description": "介绍从「人主动访问网站」到「Agent 主动服务人」的 Web4.0 转变，以及个人 Agent、社群节点网络、节点任务与收益、NXNOS 底层系统和创业启动方案。",
       "format": "PDF",
+      "version": "v20260713",
       "downloadLabel": "下载 PPTX"
     },
     "人工智能工作原理与NXNOS系统培训V20260909.pptx": {
@@ -151,6 +163,7 @@
       "title": "人工智能工作原理与 NXNOS 系统培训",
       "description": "用一张图讲清 AI 工作原理与 NXNOS 的完整逻辑，并总结「人在电脑和手机上的所有工作全部由 NXNOS 完成」的系统愿景。",
       "format": "PDF",
+      "version": "V20260909",
       "downloadLabel": "下载 PPTX"
     },
     "传统企业AI转型升级方案V20260707.pptx": {
@@ -161,6 +174,7 @@
       "title": "传统企业 AI 转型升级方案",
       "description": "面向传统企业的 AI 转型整体方案，重点讲转型痛点、14 套全场景业务系统、240 名数字员工、数据是核心竞争力与企业降本增效。",
       "format": "PDF",
+      "version": "V20260707",
       "downloadLabel": "下载 PPTX"
     },
     "创业陪跑工作站V20260630-2.pptx": {
@@ -171,6 +185,7 @@
       "title": "创业陪跑工作站",
       "description": "介绍超算工作站与体验馆的定位、业务职责、收益矩阵和运营方式，覆盖项目孵化股权、算力充值分成、安装咨询服务等收益来源。",
       "format": "PDF",
+      "version": "V20260630-2",
       "downloadLabel": "下载 PPTX"
     },
     "创业陪跑工作站运营培训手册V260820.pptx": {
@@ -181,6 +196,7 @@
       "title": "创业陪跑工作站运营培训手册",
       "description": "面向工作站站长的内部运营培训课件，分六部分：工作站定位、政策资源体系、孵化器合作获客、企业四步孵化流程、签约后六步运营、盈利模式与团队激励。",
       "format": "PDF",
+      "version": "V260820",
       "downloadLabel": "下载 PPTX"
     },
     "超算工作站介绍V20260623.pptx": {
@@ -191,6 +207,7 @@
       "title": "超算工作站介绍",
       "description": "从创业者、实体商家、AI 从业者三类人群痛点切入，引出人工智能创业陪跑服务工作站定位，详解核心职责与七大核心收益。",
       "format": "PDF",
+      "version": "V20260623",
       "downloadLabel": "下载 PPTX"
     },
     "遥控器引导.png": {
@@ -201,6 +218,7 @@
       "title": "遥控器引导",
       "description": "遥控器语音操作说明图，指导访客长按波纹键开始说话、松开结束语音识别，并提示在安静环境中使用。",
       "format": "PNG",
+      "version": "",
       "downloadLabel": "下载原图"
     },
     "闫经理微信二维码.jpg": {
@@ -211,6 +229,7 @@
       "title": "闫经理微信二维码",
       "description": "闫经理微信二维码，用于客户扫码添加微信并开展后续沟通。",
       "format": "JPG",
+      "version": "",
       "downloadLabel": "下载原图"
     }
   }
