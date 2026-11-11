@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "note": "按原始文件名登记的元数据：新增素材时先补齐字段再运行 resource-sync.mjs；version 必填，有资料版本时保留原值，没有时填空字符串。",
+  "note": "按原始文件名登记：新增或替换素材前由 Agent 补充/复用 id、标题、说明和 version；没有资料版本时 version 填空字符串。",
   "order": [
     "nxnos-install-guide",
     "nxnos-intro",
@@ -221,13 +221,13 @@
       "version": "",
       "downloadLabel": "下载原图"
     },
-    "闫经理微信二维码.jpg": {
+    "阎经理微信二维码.jpg": {
       "id": "wechat-qr-manager",
       "assetKey": "wechat-qr-manager.jpg",
       "type": "poster",
       "typeLabel": "图片",
-      "title": "闫经理微信二维码",
-      "description": "闫经理微信二维码，用于客户扫码添加微信并开展后续沟通。",
+      "title": "阎经理微信二维码",
+      "description": "阎经理微信二维码，用于客户扫码添加微信并开展后续沟通。",
       "format": "JPG",
       "version": "",
       "downloadLabel": "下载原图"
