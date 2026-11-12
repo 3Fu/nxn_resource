@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.18.1",
-  "updatedAt": "2026-09-18T05:10:16.597Z",
+  "catalogVersion": "2026.11.11.1",
+  "updatedAt": "2026-11-11T09:19:59.301Z",
   "sources": [
     {
       "id": "ghproxy-net",
@@ -26,11 +26,11 @@
     }
   ],
   "bundle": {
-    "assetKey": "NXN-workstation-resources-2026.09.18.1.zip",
+    "assetKey": "NXN-workstation-resources-2026.11.11.1.zip",
     "title": "NXN 工作站完整资料包",
     "size": "922.0 MB",
-    "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.18.1/NXN-workstation-resources-2026.09.18.1.zip",
-    "sha256": "d1e6ea9a911bbeca12e5b3be0a9c78ec55358cc5480bbb54c47c13de4cb480a1"
+    "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.11.11.1/NXN-workstation-resources-2026.11.11.1.zip",
+    "sha256": "51621146505f934d27288896ce2f23dfb304827aa849367ea0b8d47483d8098b"
   },
   "resources": [
     {
@@ -383,19 +383,19 @@
       "id": "wechat-qr-manager",
       "type": "poster",
       "typeLabel": "图片",
-      "title": "闫经理微信二维码",
-      "description": "闫经理微信二维码，用于客户扫码添加微信并开展后续沟通。",
+      "title": "阎经理微信二维码",
+      "description": "阎经理微信二维码，用于客户扫码添加微信并开展后续沟通。",
       "version": "",
       "format": "JPG",
       "size": "0.1 MB",
       "url": "https://3fu.github.io/nxn_resource/previews/wechat-qr-manager/2026.09.16.1/wechat-qr-manager.jpg",
       "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/wechat-qr-manager.jpg",
-      "downloadName": "闫经理微信二维码.jpg",
+      "downloadName": "阎经理微信二维码.jpg",
       "downloadLabel": "下载原图",
       "previewKind": "image",
       "sha256": "ed85e9153649c315b4c077efedb266dd106496c36a928967cb2e456569358e66",
       "assetKey": "wechat-qr-manager.jpg",
-      "updatedAt": "2026-09-16T00:00:00.000Z"
+      "updatedAt": "2026-11-11T09:19:59.301Z"
     }
   ]
 }
