@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.09.18.1",
-  "generatedAt": "2026-09-18T05:10:16.597Z",
+  "catalogVersion": "2026.11.11.1",
+  "generatedAt": "2026-11-11T09:19:59.301Z",
   "sourceDirectory": "release",
   "assets": [
     {
@@ -203,7 +203,7 @@
       "previewUrl": "https://3fu.github.io/nxn_resource/previews/remote-control-guide/2026.09.16.1/remote-control-guide.png"
     },
     {
-      "originalName": "闫经理微信二维码.jpg",
+      "originalName": "阎经理微信二维码.jpg",
       "assetKey": "wechat-qr-manager.jpg",
       "id": "wechat-qr-manager",
       "type": "poster",
