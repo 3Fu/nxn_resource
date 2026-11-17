@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.11.11.1",
-  "updatedAt": "2026-11-11T09:19:59.301Z",
+  "catalogVersion": "2026.11.17.1",
+  "updatedAt": "2026-11-17T06:08:58.629Z",
   "sources": [
     {
       "id": "ghproxy-net",
@@ -26,11 +26,11 @@
     }
   ],
   "bundle": {
-    "assetKey": "NXN-workstation-resources-2026.11.11.1.zip",
+    "assetKey": "NXN-workstation-resources-2026.11.17.1.zip",
     "title": "NXN 工作站完整资料包",
-    "size": "922.0 MB",
-    "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.11.11.1/NXN-workstation-resources-2026.11.11.1.zip",
-    "sha256": "51621146505f934d27288896ce2f23dfb304827aa849367ea0b8d47483d8098b"
+    "size": "913.1 MB",
+    "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.11.17.1/NXN-workstation-resources-2026.11.17.1.zip",
+    "sha256": "cdceeca91a5cd22c302efffc3fc28d3c699a8cd92decc6d03e1f77c4127d7a0c"
   },
   "resources": [
     {
@@ -39,19 +39,19 @@
       "typeLabel": "视频",
       "title": "NXNOS 下载安装",
       "description": "演示 NXNOS 的下载与安装过程，说明 Windows 环境下的基础安装步骤。",
-      "version": "",
+      "version": "v20261117",
       "format": "MP4",
-      "size": "12.4 MB",
-      "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/nxnos-install-guide.mp4",
-      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/nxnos-install-guide.mp4",
-      "downloadName": "NXNOS下载安装 .mp4",
+      "size": "3.5 MB",
+      "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.11.17.1/nxnos-install-guide.mp4",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.11.17.1/nxnos-install-guide.mp4",
+      "downloadName": "NXNOS下载与安装v20261117.mp4",
       "downloadLabel": "下载原视频",
       "previewKind": "video",
-      "sha256": "7f6ffce2f010a394d16fc46ba6a69e6860afe1ec580746997567397f5c0a1c50",
+      "sha256": "1e5c4166f8631b77fa8a96fd0570a166aa8fbdfbf027d5de8d678f9d652a904d",
       "assetKey": "nxnos-install-guide.mp4",
-      "updatedAt": "2026-09-16T00:00:00.000Z",
-      "duration": "00:02:33",
-      "coverUrl": "https://3fu.github.io/nxn_resource/previews/nxnos-install-guide/2026.09.16.1/nxnos-install-guide.jpg"
+      "updatedAt": "2026-11-17T06:08:58.629Z",
+      "duration": "00:01:59",
+      "coverUrl": "https://3fu.github.io/nxn_resource/previews/nxnos-install-guide/2026.11.17.1/nxnos-install-guide.jpg"
     },
     {
       "id": "nxnos-intro",
