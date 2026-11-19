@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026.11.17.1",
-  "updatedAt": "2026-11-17T06:08:58.629Z",
+  "catalogVersion": "2026.11.19.1",
+  "updatedAt": "2026-11-19T05:44:58.672Z",
   "sources": [
     {
       "id": "ghproxy-net",
@@ -26,11 +26,11 @@
     }
   ],
   "bundle": {
-    "assetKey": "NXN-workstation-resources-2026.11.17.1.zip",
+    "assetKey": "NXN-workstation-resources-2026.11.19.1.zip",
     "title": "NXN 工作站完整资料包",
-    "size": "913.1 MB",
-    "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.11.17.1/NXN-workstation-resources-2026.11.17.1.zip",
-    "sha256": "cdceeca91a5cd22c302efffc3fc28d3c699a8cd92decc6d03e1f77c4127d7a0c"
+    "size": "705.7 MB",
+    "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.11.19.1/NXN-workstation-resources-2026.11.19.1.zip",
+    "sha256": "8b3117d3c3463cef2a5406843486d52cf2c900bb65bd50be3396173c468a3ba5"
   },
   "resources": [
     {
@@ -159,19 +159,19 @@
       "typeLabel": "视频",
       "title": "呆马公司介绍视频",
       "description": "介绍呆马公司在人工智能、大模型、语言模型训练、AI 数据处理、算力平台与产业应用方面的发展与技术实力。",
-      "version": "",
+      "version": "v20261119",
       "format": "MP4",
-      "size": "386.0 MB",
-      "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/daima-company-intro.mp4",
-      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.09.16.1/daima-company-intro.mp4",
-      "downloadName": "呆马公司介绍视频.mp4",
+      "size": "178.6 MB",
+      "url": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.11.19.1/daima-company-intro.mp4",
+      "downloadUrl": "https://github.com/3Fu/nxn_resource/releases/download/resources-2026.11.19.1/daima-company-intro.mp4",
+      "downloadName": "呆马公司介绍视频v20261119.mp4",
       "downloadLabel": "下载原视频",
       "previewKind": "video",
-      "sha256": "44aa393cd586eab778fe868c8a25ead75cfe1c3e93e92db44f025562edffd0b9",
+      "sha256": "0d3c3934bbd4dcc0cbaa5f69c9a66f244da0356d00db4813b42ca355cea2c435",
       "assetKey": "daima-company-intro.mp4",
-      "updatedAt": "2026-09-16T00:00:00.000Z",
-      "duration": "00:05:43",
-      "coverUrl": "https://3fu.github.io/nxn_resource/previews/daima-company-intro/2026.09.16.1/daima-company-intro.jpg"
+      "updatedAt": "2026-11-19T05:44:58.672Z",
+      "duration": "00:05:08",
+      "coverUrl": "https://3fu.github.io/nxn_resource/previews/daima-company-intro/2026.11.19.1/daima-company-intro.jpg"
     },
     {
       "id": "vertical-model-news",
